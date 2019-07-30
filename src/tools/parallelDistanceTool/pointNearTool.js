@@ -23,6 +23,27 @@ const pointNearPerpendicular = (
   return distanceToPoint < distanceThreshold;
 };
 
+const pointNearPerpendicular2 = (
+  element,
+  handles,
+  coords,
+  distanceThreshold
+) => {
+  const cornerstone = external.cornerstone;
+  const cornerstoneMath = external.cornerstoneMath;
+  const lineSegment = {
+    start: cornerstone.pixelToCanvas(element, handles.perpendicularStart2),
+    end: cornerstone.pixelToCanvas(element, handles.perpendicularEnd2),
+  };
+
+  const distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(
+    lineSegment,
+    coords
+  );
+
+  return distanceToPoint < distanceThreshold;
+};
+
 export default function(element, data, coords, interactionType = 'mouse') {
   const cornerstone = external.cornerstone;
   const cornerstoneMath = external.cornerstoneMath;
@@ -45,6 +66,10 @@ export default function(element, data, coords, interactionType = 'mouse') {
     interactionType === 'mouse' ? state.clickProximity : state.touchProximity;
 
   if (pointNearPerpendicular(element, handles, coords, distanceThreshold)) {
+    return true;
+  }
+
+  if (pointNearPerpendicular2(element, handles, coords, distanceThreshold)) {
     return true;
   }
 

@@ -10,7 +10,6 @@ import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.
 import getHandleNearImagePoint from './../../manipulators/getHandleNearImagePoint.js';
 import { moveAllHandles } from './../../manipulators/index.js';
 import moveHandle from './moveHandle/moveHandle.js';
-import invertHandles from './invertHandles.js';
 // import { setToolCursor, hideToolCursor } from './../../store/setToolCursor.js';
 
 export default function(evt) {
@@ -62,9 +61,6 @@ export default function(evt) {
 
       unselectAllHandles(data.handles);
       handle.moving = true;
-
-      // Invert handles if needed
-      // handle = invertHandles(eventData, data, handle);
 
       /* Hide the cursor to improve precision while resizing the line or set to move
          if dragging text box

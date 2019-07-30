@@ -3,7 +3,14 @@ import external from './../../../externalModules.js';
 // Move long-axis start point
 export default function(proposedPoint, data) {
   const { distance } = external.cornerstoneMath.point;
-  const { start, end, perpendicularStart, perpendicularEnd } = data.handles;
+  const {
+    start,
+    end,
+    perpendicularStart,
+    perpendicularEnd,
+    perpendicularStart2,
+    perpendicularEnd2,
+  } = data.handles;
 
   const longLine = {
     start: {
@@ -27,6 +34,19 @@ export default function(proposedPoint, data) {
     },
   };
 
+  const perpendicularLine2 = {
+    start: {
+      x: perpendicularStart2.x,
+      y: perpendicularStart2.y,
+    },
+    end: {
+      x: perpendicularEnd2.x,
+      y: perpendicularEnd2.y,
+    },
+  };
+
+  // Perpendicular line 1
+
   const intersection = external.cornerstoneMath.lineSegment.intersectLine(
     longLine,
     perpendicularLine
@@ -38,10 +58,11 @@ export default function(proposedPoint, data) {
   );
   const distanceFromPerpendicularP2 = distance(perpendicularEnd, intersection);
 
+  const offset_baseline = 3;
   const distanceToLineP2 = distance(end, intersection);
   const newLineLength = distance(end, proposedPoint);
 
-  if (newLineLength <= distanceToLineP2) {
+  if (newLineLength - offset_baseline <= distanceToLineP2) {
     return false;
   }
 
@@ -60,6 +81,36 @@ export default function(proposedPoint, data) {
 
   perpendicularEnd.x = newIntersection.x + distanceFromPerpendicularP2 * dy;
   perpendicularEnd.y = newIntersection.y - distanceFromPerpendicularP2 * dx;
+
+  // Perpendicular line 2
+  const intersection2 = external.cornerstoneMath.lineSegment.intersectLine(
+    longLine,
+    perpendicularLine2
+  );
+
+  const distanceFromPerpendicularP3 = distance(
+    perpendicularStart2,
+    intersection2
+  );
+  const distanceFromPerpendicularP4 = distance(
+    perpendicularEnd2,
+    intersection2
+  );
+
+  const distanceToLineP4 = distance(end, intersection2);
+
+  const k2 = distanceToLineP4 / newLineLength;
+
+  const newIntersection2 = {
+    x: end.x + (proposedPoint.x - end.x) * k2,
+    y: end.y + (proposedPoint.y - end.y) * k2,
+  };
+
+  perpendicularStart2.x = newIntersection2.x - distanceFromPerpendicularP3 * dy;
+  perpendicularStart2.y = newIntersection2.y + distanceFromPerpendicularP3 * dx;
+
+  perpendicularEnd2.x = newIntersection2.x + distanceFromPerpendicularP4 * dy;
+  perpendicularEnd2.y = newIntersection2.y - distanceFromPerpendicularP4 * dx;
 
   return true;
 }

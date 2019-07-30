@@ -20,7 +20,6 @@ export default function(eventData, data) {
       x: (start.x + end.x) / 2,
       y: (start.y + end.y) / 2,
     };
-
     // Length of long-axis
     const dx = (start.x - end.x) * (eventData.image.columnPixelSpacing || 1);
     const dy = (start.y - end.y) * (eventData.image.rowPixelSpacing || 1);
@@ -47,19 +46,16 @@ export default function(eventData, data) {
       dy_perpenticular = length * Math.sin(perpenticular_angle);
     }
 
-    const vectorX = (start.x - end.x) / length;
-    const vectorY = (start.y - end.y) / length;
-    startX_p1 = start.x - (vectorX * length) / 4;
-    startY_p1 = start.y - (vectorY * length) / 4;
-    endX_p1 = startX_p1 + dx_perpenticular;
-    endY_p1 = startY_p1 + dy_perpenticular;
+    startX_p1 = start.x - dx / 4 - dx_perpenticular / 8;
+    startY_p1 = start.y - dy / 4 - dy_perpenticular / 8;
+    endX_p1 = start.x - dx / 4 + dx_perpenticular;
+    endY_p1 = start.y - dy / 4 + dy_perpenticular;
 
-    startX_p2 = start.x - (vectorX * length * 3) / 4;
-    startY_p2 = start.y - (vectorY * length * 3) / 4;
-    endX_p2 = startX_p2 + dx_perpenticular;
-    endY_p2 = startY_p2 + dy_perpenticular;
+    startX_p2 = start.x - (dx * 3) / 4 - dx_perpenticular / 8;
+    startY_p2 = start.y - (dy * 3) / 4 - dy_perpenticular / 8;
+    endX_p2 = start.x - (dx * 3) / 4 + dx_perpenticular;
+    endY_p2 = start.y - (dy * 3) / 4 + dy_perpenticular;
   }
-
   data.handles.perpendicularStart.x = startX_p1;
   data.handles.perpendicularStart.y = startY_p1;
   data.handles.perpendicularEnd.x = endX_p1;

@@ -1,6 +1,8 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 import drawHandles from './../../manipulators/drawHandles.js';
 import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
+import external from './../../externalModules.js';
+
 
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
@@ -73,7 +75,7 @@ export default function(evt) {
       } = data.handles;
 
       // Draw the measurement line
-      drawLine(context, element, start, end, { color });
+      drawLine(context, element, start, end, { color, lineDash: [20, 2] });
 
       // Draw perpendicular line
       const strokeWidth = lineWidth;
@@ -103,12 +105,17 @@ export default function(evt) {
       // Move the textbox slightly to the right and upwards
       // So that it sits beside the length tool handle
       const xOffset = 10;
-      const textBoxAnchorPoints = handles => [
-        handles.start,
-        handles.end,
-        handles.perpendicularStart,
-        handles.perpendicularEnd,
-      ];
+      let textBoxAnchorPoints = handles => [handles.start, handles.end];
+      const intersectionP1 = getIntersectionPoints(data)[0];
+      const intersectionP2 = getIntersectionPoints(data)[1];
+      if (!isNaN(intersectionP1.x) || !isNaN(intersectionP2.x)) {
+        const textboxhandle = {
+          x: intersectionP1.x + (intersectionP2.x - intersectionP1.x) / 2,
+          y: intersectionP1.y + (intersectionP2.y - intersectionP1.y) / 2,
+        };
+        textBoxAnchorPoints = handles => [textboxhandle];
+      }
+
       const textLines = getTextBoxText(data, rowPixelSpacing, colPixelSpacing);
 
       drawLinkedTextBox(
@@ -134,14 +141,66 @@ const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
     suffix = ' pixels';
   }
 
-  const lengthText = ` L ${data.longestDiameter}${suffix}`;
-  const widthText = ` W ${data.shortestDiameter}${suffix}`;
+  const intersectionP1 = getIntersectionPoints(data)[0];
+  const intersectionP2 = getIntersectionPoints(data)[1];
+
+  const parallel_distance = external.cornerstoneMath.point
+    .distance(intersectionP1, intersectionP2)
+    .toFixed(2);
+
+  const lengthText = ` Distance ${parallel_distance}${suffix}`;
 
   const { labels } = data;
 
   if (labels && Array.isArray(labels)) {
-    return [...labels, lengthText, widthText];
+    return [...labels, lengthText];
   }
 
-  return [lengthText, widthText];
+  return [lengthText];
+};
+
+const getIntersectionPoints = data => {
+  const longLine = {
+    start: {
+      x: data.handles.start.x,
+      y: data.handles.start.y,
+    },
+    end: {
+      x: data.handles.end.x,
+      y: data.handles.end.y,
+    },
+  };
+
+  const perpendicularLine1 = {
+    start: {
+      x: data.handles.perpendicularStart.x,
+      y: data.handles.perpendicularStart.y,
+    },
+    end: {
+      x: data.handles.perpendicularEnd.x,
+      y: data.handles.perpendicularEnd.y,
+    },
+  };
+
+  const perpendicularLine2 = {
+    start: {
+      x: data.handles.perpendicularStart2.x,
+      y: data.handles.perpendicularStart2.y,
+    },
+    end: {
+      x: data.handles.perpendicularEnd2.x,
+      y: data.handles.perpendicularEnd2.y,
+    },
+  };
+
+  const intersectionP1 = external.cornerstoneMath.lineSegment.intersectLine(
+    longLine,
+    perpendicularLine1
+  );
+
+  const intersectionP2 = external.cornerstoneMath.lineSegment.intersectLine(
+    longLine,
+    perpendicularLine2
+  );
+  return [intersectionP1, intersectionP2];
 };
