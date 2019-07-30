@@ -106,8 +106,9 @@ export default function(evt) {
       // So that it sits beside the length tool handle
       const xOffset = 10;
       let textBoxAnchorPoints = handles => [handles.start, handles.end];
-      const intersectionP1 = getIntersectionPoints(data)[0];
-      const intersectionP2 = getIntersectionPoints(data)[1];
+      const intersectionPoints = getIntersectionPoints(data);
+      const intersectionP1 = intersectionPoints[0];
+      const intersectionP2 = intersectionPoints[1];
       if (!isNaN(intersectionP1.x) || !isNaN(intersectionP2.x)) {
         const textboxhandle = {
           x: intersectionP1.x + (intersectionP2.x - intersectionP1.x) / 2,
@@ -141,12 +142,16 @@ const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
     suffix = ' pixels';
   }
 
-  const intersectionP1 = getIntersectionPoints(data)[0];
-  const intersectionP2 = getIntersectionPoints(data)[1];
+  const intersectionPoints = getIntersectionPoints(data);
+  const intersectionP1 = intersectionPoints[0];
+  const intersectionP2 = intersectionPoints[1];
 
-  const parallel_distance = external.cornerstoneMath.point
-    .distance(intersectionP1, intersectionP2)
-    .toFixed(2);
+  const dx =
+    (intersectionP2.x - intersectionP1.x) * (colPixelSpacing || 1);
+  const dy =
+    (intersectionP2.y - intersectionP1.y) * (rowPixelSpacing || 1);
+
+  const parallel_distance = Math.sqrt(dx * dx + dy * dy).toFixed(2);
 
   const lengthText = ` Distance ${parallel_distance}${suffix}`;
 
