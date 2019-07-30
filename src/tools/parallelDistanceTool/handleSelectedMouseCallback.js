@@ -24,7 +24,7 @@ export default function(evt) {
     data.invalidated = true;
     if (anyHandlesOutsideImage(eventData, data.handles)) {
       // Delete the measurement
-      removeToolState(element, this.name, data);
+      // removeToolState(element, this.name, data);
     }
 
     // Update the handles to keep selected state
@@ -102,8 +102,8 @@ export default function(evt) {
         data,
         null,
         {
-          deleteIfHandleOutsideImage: true,
-          preventHandleOutsideImage: false,
+          deleteIfHandleOutsideImage: false,
+          preventHandleOutsideImage: true,
           doneMovingCallback,
         },
         'mouse'

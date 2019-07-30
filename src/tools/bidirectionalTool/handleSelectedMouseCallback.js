@@ -106,8 +106,8 @@ export default function(evt) {
         data,
         null,
         {
-          deleteIfHandleOutsideImage: true,
-          preventHandleOutsideImage: false,
+          deleteIfHandleOutsideImage: false,
+          preventHandleOutsideImage: true,
           doneMovingCallback,
         },
         'mouse'
