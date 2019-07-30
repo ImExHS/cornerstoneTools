@@ -70,7 +70,7 @@ export default function(evt) {
       // }
 
       moveHandle(eventData, this.name, data, handle, () =>
-        handleDoneMove(handle)
+        handleDoneMove(handle), handle.preventHandleOutsideImage !== false 
       );
 
       preventPropagation(evt);
