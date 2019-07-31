@@ -23,22 +23,34 @@ export default function(
     const eventData = event.detail;
 
     handle.hasMoved = true;
-
-    if (handle.index === undefined || handle.index === null) {
-      handle.x = eventData.currentPoints.image.x + distanceFromTool.x;
-      handle.y = eventData.currentPoints.image.y + distanceFromTool.y;
-    } else {
-      setHandlesPosition(handle, eventData, data, distanceFromTool);
-    }
+    let outsideImage = false;
 
     if (preventHandleOutsideImage) {
+
+      if(eventData.currentPoints.image.x < 0  || eventData.currentPoints.image.x > eventData.image.width) {
+        outsideImage = true;
+      }
+      if(eventData.currentPoints.image.y < 0  || eventData.currentPoints.image.y > eventData.image.height) {
+        outsideImage = true;
+      }
+     
       handle.x = Math.max(handle.x, 0);
       handle.x = Math.min(handle.x, eventData.image.width);
 
       handle.y = Math.max(handle.y, 0);
       handle.y = Math.min(handle.y, eventData.image.height);
+      
     }
 
+    if (!outsideImage){
+      if (handle.index === undefined || handle.index === null) {
+        handle.x = eventData.currentPoints.image.x + distanceFromTool.x;
+        handle.y = eventData.currentPoints.image.y + distanceFromTool.y;
+      } else {
+        setHandlesPosition(handle, eventData, data, distanceFromTool);
+      }
+    }
+    
     data.invalidated = true;
 
     external.cornerstone.updateImage(element);

@@ -33,11 +33,10 @@ export default function(evt) {
       handle.selected = true;
     }
 
-    // setToolCursor(this.element, this.svgCursor);
-
     external.cornerstone.updateImage(element);
     element.addEventListener(EVENTS.MOUSE_MOVE, this._moveCallback);
     element.addEventListener(EVENTS.TOUCH_START, this._moveCallback);
+    
   };
 
   const coords = eventData.startPoints.canvas;

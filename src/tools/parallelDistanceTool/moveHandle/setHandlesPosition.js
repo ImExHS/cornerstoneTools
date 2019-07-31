@@ -165,13 +165,13 @@ export default function(handle, eventData, data, distanceFromTool) {
     }
   }  else if (handle.index === 4) {
     movedPoint = perpendicularLeftFixedPoint2(proposedPoint, data);
-    if (!movedPoint) {
+    if (!movedPoint && eventData.currentPoints.image && data.handles.leftStart) {
       eventData.currentPoints.image.x = data.handles.leftStart.x;
       eventData.currentPoints.image.y = data.handles.leftStart.y;
     }
   } else if (handle.index === 5) {
     movedPoint = perpendicularRightFixedPoint2(proposedPoint, data);
-    if (!movedPoint) {
+    if (!movedPoint && eventData.currentPoints.image && data.handles.rightStart) {
       eventData.currentPoints.image.x = data.handles.rightStart.x;
       eventData.currentPoints.image.y = data.handles.rightStart.y;
     }

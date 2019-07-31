@@ -3,7 +3,6 @@ import drawHandles from './../../manipulators/drawHandles.js';
 import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
 import external from './../../externalModules.js';
 
-
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 import { getToolState } from './../../stateManagement/toolState.js';
@@ -104,7 +103,8 @@ export default function(evt) {
       // Draw the textbox
       // Move the textbox slightly to the right and upwards
       // So that it sits beside the length tool handle
-      const xOffset = 10;
+      const xOffset = 0;
+      // const yOffset = 20;
       let textBoxAnchorPoints = handles => [handles.start, handles.end];
       const intersectionPoints = getIntersectionPoints(data);
       const intersectionP1 = intersectionPoints[0];
@@ -114,6 +114,8 @@ export default function(evt) {
           x: intersectionP1.x + (intersectionP2.x - intersectionP1.x) / 2,
           y: intersectionP1.y + (intersectionP2.y - intersectionP1.y) / 2,
         };
+        // textBox.x = textboxhandle.x;
+        // textBox.y = textboxhandle.y + yOffset;
         textBoxAnchorPoints = handles => [textboxhandle];
       }
 
