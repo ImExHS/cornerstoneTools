@@ -10,7 +10,6 @@ import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.
 import getHandleNearImagePoint from './../../manipulators/getHandleNearImagePoint.js';
 import { moveAllHandles } from './../../manipulators/index.js';
 import moveHandle from './moveHandle/moveHandle.js';
-import invertHandles from './invertHandles.js';
 // import { setToolCursor, hideToolCursor } from './../../store/setToolCursor.js';
 
 export default function(evt) {
@@ -25,7 +24,7 @@ export default function(evt) {
     data.invalidated = true;
     if (anyHandlesOutsideImage(eventData, data.handles)) {
       // Delete the measurement
-      removeToolState(element, this.name, data);
+      // removeToolState(element, this.name, data);
     }
 
     // Update the handles to keep selected state
@@ -34,11 +33,10 @@ export default function(evt) {
       handle.selected = true;
     }
 
-    // setToolCursor(this.element, this.svgCursor);
-
     external.cornerstone.updateImage(element);
     element.addEventListener(EVENTS.MOUSE_MOVE, this._moveCallback);
     element.addEventListener(EVENTS.TOUCH_START, this._moveCallback);
+    
   };
 
   const coords = eventData.startPoints.canvas;
@@ -63,9 +61,6 @@ export default function(evt) {
       unselectAllHandles(data.handles);
       handle.moving = true;
 
-      // Invert handles if needed
-      handle = invertHandles(eventData, data, handle);
-
       /* Hide the cursor to improve precision while resizing the line or set to move
          if dragging text box
       */
@@ -74,7 +69,7 @@ export default function(evt) {
       // }
 
       moveHandle(eventData, this.name, data, handle, () =>
-        handleDoneMove(handle), handle.preventHandleOutsideImage !== false
+        handleDoneMove(handle), handle.preventHandleOutsideImage !== false 
       );
 
       preventPropagation(evt);
