@@ -15,6 +15,7 @@ import {
 import drawLinkedTextBox from './../../util/drawLinkedTextBox.js';
 import getPixelSpacing from './../../util/getPixelSpacing';
 import roundToDecimal from '../../util/roundToDecimal.js';
+import drawTextBox from '../../util/drawTextBox.js';
 
 export default function(evt) {
   const eventData = evt.detail;
@@ -107,6 +108,46 @@ export default function(evt) {
         drawHandlesIfActive: drawHandlesOnHover,
         hideHandlesIfMoved: true
       };
+
+      let letterOptions = {
+        centering: {
+          x: true,
+          y: true
+        }
+      };
+
+      //  draw left line identification letter on center point
+      const dxA  = leftStart.x - leftEnd.x;
+      const dyA  = leftStart.y - leftEnd.y;
+      if (dxA !== 0 || dyA !== 0) {
+        const x = (leftStart.x + leftEnd.x) / 2.0;
+        const y = (leftStart.y + leftEnd.y) / 2.0 - 10;
+        const posTextA = { x, y };
+        const lineCoordsA = external.cornerstone.pixelToCanvas(element, posTextA);
+        drawTextBox(context, 'A', lineCoordsA.x, lineCoordsA.y, color, letterOptions);
+      }
+
+      //  draw right line identification letter on center point
+      const dxB  = rightStart.x - rightEnd.x;
+      const dyB  = rightStart.y - rightEnd.y;
+      if (dxB !== 0 || dyB !== 0) {
+        const x = (rightStart.x + rightEnd.x) / 2.0;
+        const y = (rightStart.y + rightEnd.y) / 2.0 - 10;
+        const posTextB = { x, y };
+        const lineCoordsB = external.cornerstone.pixelToCanvas(element, posTextB);
+        drawTextBox(context, 'B', lineCoordsB.x, lineCoordsB.y, color, letterOptions);
+      }
+
+      //  draw right line identification letter near center point
+      const dxC  = perpendicularStart.x - perpendicularEnd.x;
+      const dyC  = perpendicularStart.y - perpendicularEnd.y;
+      if (dxC !== 0 || dyC !== 0) {
+        const x = (perpendicularStart.x + perpendicularEnd.x) / 2.0;
+        const y = (perpendicularStart.y + perpendicularEnd.y) / 2.0 + 10;
+        const posTextC = { x, y };
+        const lineCoordsC = external.cornerstone.pixelToCanvas(element, posTextC);
+        drawTextBox(context, 'C', lineCoordsC.x, lineCoordsC.y, color, letterOptions);
+      }
 
       // Draw the handles
       drawHandles(context, eventData, data.handles, color, handleOptions);

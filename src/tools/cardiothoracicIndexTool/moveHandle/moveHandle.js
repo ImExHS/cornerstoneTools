@@ -5,6 +5,16 @@ import setHandlesPosition from './setHandlesPosition.js';
 import getActiveTool from './../../../util/getActiveTool';
 import baseAnnotationTool from './../../../base/baseAnnotationTool.js';
 
+function pointInsideImage( pos, image){
+
+  if( pos.x < 0 || pos.x >= image.width ||
+      pos.y < 0 || pos.y >= image.height ){
+
+    return false;
+  }
+  return true;
+}
+
 export default function(
   mouseEventData,
   toolType,
@@ -23,19 +33,47 @@ export default function(
     const eventData = event.detail;
 
     handle.hasMoved = true;
-
-    if (handle.index === undefined || handle.index === null) {
-      handle.x = eventData.currentPoints.image.x + distanceFromTool.x;
-      handle.y = eventData.currentPoints.image.y + distanceFromTool.y;
-    } else {
-      setHandlesPosition(handle, eventData, data, distanceFromTool);
-    }
-
+    let outsideImage = false;
+    let originalOutside = false;
     if (preventHandleOutsideImage) {
-      handle.x = Math.max(handle.x, 0);
-      handle.x = Math.min(handle.x, eventData.image.width);
-      handle.y = Math.max(handle.y, 0);
-      handle.y = Math.min(handle.y, eventData.image.height);
+      if( !pointInsideImage( eventData.currentPoints.image, eventData.image ) ){
+        outsideImage = true;
+      }
+      const { start, end, perpendicularStart, perpendicularEnd, leftStart, leftEnd, rightStart, rightEnd } = data.handles;
+      if( handle.index == 0 ){
+        if ( !pointInsideImage( start, eventData.image ) ) {
+          originalOutside = true;
+        }
+      } else if( handle.index == 1 ){
+        if ( !pointInsideImage( end, eventData.image ) ) {
+          originalOutside = true;
+        }
+      } else if( handle.index == 2 ){
+        if ( !pointInsideImage( perpendicularStart, eventData.image ) ) {
+          originalOutside = true;
+        }
+      } else if( handle.index == 3 ){
+        if ( !pointInsideImage( perpendicularEnd, eventData.image ) ) {
+          originalOutside = true;
+        }
+      } else if( handle.index == 4 ){
+        if ( !pointInsideImage( leftStart, eventData.image ) ) {
+          originalOutside = true;
+        }
+      } else if( handle.index == 6 ){
+        if ( !pointInsideImage( rightStart, eventData.image ) ) {
+          originalOutside = true;
+        }
+      }
+    }
+    if( !outsideImage || originalOutside )
+    {
+      if (handle.index === undefined || handle.index === null) {
+        handle.x = eventData.currentPoints.image.x + distanceFromTool.x;
+        handle.y = eventData.currentPoints.image.y + distanceFromTool.y;
+      } else {
+        setHandlesPosition(handle, eventData, data, distanceFromTool);
+      }
     }
 
     data.invalidated = true;

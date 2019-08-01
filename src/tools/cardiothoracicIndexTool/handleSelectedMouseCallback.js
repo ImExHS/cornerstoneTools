@@ -25,7 +25,7 @@ export default function(evt) {
     data.invalidated = true;
     if (anyHandlesOutsideImage(eventData, data.handles)) {
       // Delete the measurement
-      removeToolState(element, this.name, data);
+      // removeToolState(element, this.name, data);
     }
 
     // Update the handles to keep selected state
@@ -62,18 +62,9 @@ export default function(evt) {
       unselectAllHandles(data.handles);
       handle.moving = true;
 
-      // Invert handles if needed
-      // handle = invertHandles(eventData, data, handle);
-
-      /* Hide the cursor to improve precision while resizing the line or set to move
-         if dragging text box
-      */
-      // if (!handle.hasBoundingBox) {
-      //   hideToolCursor(this.element);
-      // }
-
       moveHandle(eventData, this.name, data, handle, () =>
-        handleDoneMove(handle)
+        handleDoneMove(handle), 
+        !(handle.allowedOutsideImage)
       );
 
       preventPropagation(evt);
@@ -106,7 +97,7 @@ export default function(evt) {
         null,
         {
           deleteIfHandleOutsideImage: true,
-          preventHandleOutsideImage: false,
+          preventHandleOutsideImage: true,
           doneMovingCallback,
         },
         'mouse'
