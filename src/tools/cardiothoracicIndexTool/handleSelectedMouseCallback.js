@@ -10,8 +10,6 @@ import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.
 import getHandleNearImagePoint from './../../manipulators/getHandleNearImagePoint.js';
 import { moveAllHandles } from './../../manipulators/index.js';
 import moveHandle from './moveHandle/moveHandle.js';
-import invertHandles from './invertHandles.js';
-// import { setToolCursor, hideToolCursor } from './../../store/setToolCursor.js';
 
 export default function(evt) {
   const eventData = evt.detail;
