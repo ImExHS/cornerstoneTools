@@ -29,6 +29,7 @@ export default function(movedPoint, data) {
     return false;
   }
 
+  // check that new point is on right side
   const cross = new external.cornerstoneMath.Vector3();
   const vecA = { x: end.x-start.x, y: end.y-start.y, z: 0 };
   const vecB = { x: movedPoint.x-start.x, y: movedPoint.y-start.y, z: 0 };
@@ -49,53 +50,15 @@ export default function(movedPoint, data) {
     y: end.y + fudgeFactor * dy,
   };
 
-  perpendicularStart.x = movedPoint.x;
-  perpendicularStart.y = movedPoint.y;
-  perpendicularEnd.x = movedPoint.x - total * dy;
-  perpendicularEnd.y = movedPoint.y + total * dx;
+  // set new position for perpendicular line
+  perpendicularStart.x = adjustedLineP2.x + distanceFromMoved * dy;
+  perpendicularStart.y = adjustedLineP2.y - distanceFromMoved * dx;
+  perpendicularEnd.x = perpendicularStart.x - total * dy;
+  perpendicularEnd.y = perpendicularStart.y + total * dx;
+
+  // mark that handle has been modified
   perpendicularEnd.locked = false;
   perpendicularStart.locked = false;
-
-  const longLine = {
-    start: {
-      x: start.x,
-      y: start.y,
-    },
-    end: {
-      x: end.x,
-      y: end.y,
-    },
-  };
-
-  const perpendicularLine = {
-    start: {
-      x: perpendicularStart.x,
-      y: perpendicularStart.y,
-    },
-    end: {
-      x: perpendicularEnd.x,
-      y: perpendicularEnd.y,
-    },
-  };
-
-  const intersection = external.cornerstoneMath.lineSegment.intersectLine(
-    longLine,
-    perpendicularLine
-  );
-
-  if (!intersection) {
-    if (distance(movedPoint, start) > distance(movedPoint, end)) {
-      perpendicularStart.x = adjustedLineP2.x + distanceFromMoved * dy;
-      perpendicularStart.y = adjustedLineP2.y - distanceFromMoved * dx;
-      perpendicularEnd.x = perpendicularStart.x - total * dy;
-      perpendicularEnd.y = perpendicularStart.y + total * dx;
-    } else {
-      perpendicularStart.x = adjustedLineP1.x + distanceFromMoved * dy;
-      perpendicularStart.y = adjustedLineP1.y - distanceFromMoved * dx;
-      perpendicularEnd.x = perpendicularStart.x - total * dy;
-      perpendicularEnd.y = perpendicularStart.y + total * dx;
-    }
-  }
 
   return true;
 }

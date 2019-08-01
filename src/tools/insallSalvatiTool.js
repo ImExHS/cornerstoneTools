@@ -52,7 +52,8 @@ export default class extends baseAnnotationTool {
       active: true,
       color: undefined,
       complete: false,
-      ratio: undefined,
+      ratioAB: undefined,
+      ratioBA: undefined,
       lengthA: undefined,
       lengthB: undefined,
       rangle: undefined,
@@ -234,7 +235,7 @@ export default class extends baseAnnotationTool {
     }
 
     function textBoxText(data) {
-      const { lengthA, lengthB, ratio } = data;
+      const { lengthA, lengthB, ratioAB, ratioBA } = data;
 
       // Set the length text suffix depending on whether or not pixelSpacing is available
       let suffix = ' mm';
@@ -245,14 +246,17 @@ export default class extends baseAnnotationTool {
 
       // Define an array to store the rows of text for the textbox
       const textLines = [];
-      if (ratio) {
-        textLines.push(`ratio B/A: ${ratio}`);
+      if (ratioAB) {
+        textLines.push(`ratio AB: ${ratioAB}`);
       }
       if (lengthA) {
         textLines.push(`length A: ${lengthA} ${suffix}`);
       }
       if (lengthB) {
         textLines.push(`length B: ${lengthB} ${suffix}`);        
+      }
+      if (ratioBA) {
+        textLines.push(`ratio BA: ${ratioBA}`);
       }
 
       return textLines;
@@ -262,6 +266,7 @@ export default class extends baseAnnotationTool {
       return [handles.start, handles.start2, handles.end, handles.end2];
     }
 
+    // find the point on line1 near to line 2
     function textBoxAnchorPointLine1(handles) {
       const distSS = Math.abs(handles.start.x - handles.start2.x) + Math.abs(handles.start.y - handles.start2.y);
       const distSE = Math.abs(handles.start.x - handles.end2.x) + Math.abs(handles.start.y - handles.end2.y);
@@ -276,6 +281,7 @@ export default class extends baseAnnotationTool {
       }
     }
 
+    // find the point on line2 near to line 1
     function textBoxAnchorPointLine2(handles) {
       const distSS = Math.abs(handles.start2.x - handles.start.x) + Math.abs(handles.start2.y - handles.start.y);
       const distSE = Math.abs(handles.start2.x - handles.end.x) + Math.abs(handles.start2.y - handles.end.y);
@@ -425,21 +431,19 @@ export default class extends baseAnnotationTool {
     if (length1 && !Number.isNaN(length1)) {
       data.lengthA = roundToDecimal(length1,2);
     }
-    if (length2 && !Number.isNaN(length2) ) {
+    if (length2 && !Number.isNaN(length2)) {
       data.lengthB = roundToDecimal(length2,2);
     }
+
+    // find ratios
     if (length1 && length2) {
       if (length2 !== 0) {
-        data.ratio = roundToDecimal(length2 / length1, 4);
+        data.ratioAB = roundToDecimal(length1 / length2, 4);
+      }
+      if (length1 !== 0) {
+        data.ratioBA = roundToDecimal(length2 / length1, 4);
       }
     }
-
-    // let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
-    // angle *= (180 / Math.PI);
-    // const rAngle = roundToDecimal(angle, 2);
-    // if (!Number.isNaN(rAngle)) {
-    //   data.rAngle = rAngle;
-    // }
   }
 
   activeCallback(element) {
@@ -454,7 +458,6 @@ export default class extends baseAnnotationTool {
 
   enabledCallback(element) {
     element.removeEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
-
   }
 
   disabledCallback(element) {
@@ -478,6 +481,7 @@ export default class extends baseAnnotationTool {
       }
     };
 
+    //  find middle point of line 1 and draw an identifier on that position
     let x = 0;
     let y = 0;
     const dx = handles.start.x - handles.end.x;
@@ -489,6 +493,7 @@ export default class extends baseAnnotationTool {
       const lineCoordsA = cornerstone.pixelToCanvas(element, posTextA);
       drawTextBox(context, 'A', lineCoordsA.x, lineCoordsA.y, color, options);
     }
+    //  find middle point of line 2 and draw an identifier on that position
     const dx2  = handles.start2.x - handles.end2.x;
     const dy2  = handles.start2.y - handles.end2.y;
     if (dx2 !== 0 || dy2 !== 0) {

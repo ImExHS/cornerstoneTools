@@ -33,7 +33,6 @@ export default function(
     const eventData = event.detail;
 
     handle.hasMoved = true;
-
     let outsideImage = false;
     let originalOutside = false;
     if (preventHandleOutsideImage) {
@@ -57,10 +56,18 @@ export default function(
         if ( !pointInsideImage( perpendicularEnd, eventData.image ) ) {
           originalOutside = true;
         }
+      } else if( handle.index == 4 ){
+        if ( !pointInsideImage( leftStart, eventData.image ) ) {
+          originalOutside = true;
+        }
+      } else if( handle.index == 6 ){
+        if ( !pointInsideImage( rightStart, eventData.image ) ) {
+          originalOutside = true;
+        }
       }
     }
     if( !outsideImage || originalOutside )
-    {    
+    {
       if (handle.index === undefined || handle.index === null) {
         handle.x = eventData.currentPoints.image.x + distanceFromTool.x;
         handle.y = eventData.currentPoints.image.y + distanceFromTool.y;

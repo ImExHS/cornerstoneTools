@@ -1,12 +1,13 @@
 import external from './../../../externalModules.js';
 
-// Move perpendicular line start point
+// Move perpendicular line end point
 export default function(movedPoint, data) {
   const { distance } = external.cornerstoneMath.point;
   const { start, end, perpendicularStart, perpendicularEnd } = data.handles;
 
   const fudgeFactor = 1;
-  const fixedPoint = perpendicularEnd;
+
+  const fixedPoint = perpendicularStart;
 
   const distanceFromFixed = external.cornerstoneMath.lineSegment.distanceToPoint(
     data.handles,
@@ -18,6 +19,7 @@ export default function(movedPoint, data) {
   );
 
   const distanceBetweenPoints = distance(fixedPoint, movedPoint);
+
   const total = distanceFromFixed + distanceFromMoved;
 
   if (distanceBetweenPoints <= distanceFromFixed) {
@@ -29,14 +31,15 @@ export default function(movedPoint, data) {
     return false;
   }
 
+  // check that new point is on right side
   const cross = new external.cornerstoneMath.Vector3();
   const vecA = { x: end.x-start.x, y: end.y-start.y, z: 0 };
   const vecB = { x: movedPoint.x-start.x, y: movedPoint.y-start.y, z: 0 };
   cross.crossVectors(vecA,vecB);
-  if (cross.z <= 0) {
+  if (cross.z >= 0) {
     return false;
   }
-
+ 
   const dx = (start.x - end.x) / length;
   const dy = (start.y - end.y) / length;
 
@@ -49,53 +52,15 @@ export default function(movedPoint, data) {
     y: end.y + fudgeFactor * dy,
   };
 
-  perpendicularStart.x = movedPoint.x;
-  perpendicularStart.y = movedPoint.y;
-  perpendicularEnd.x = movedPoint.x - total * dy;
-  perpendicularEnd.y = movedPoint.y + total * dx;
+  // reposition main perpendicular line
+  perpendicularEnd.x = adjustedLineP2.x - distanceFromMoved * dy;
+  perpendicularEnd.y = adjustedLineP2.y + distanceFromMoved * dx;
+  perpendicularStart.x = perpendicularEnd.x + total * dy;
+  perpendicularStart.y = perpendicularEnd.y - total * dx;
+
+  // mark that handle is moved 
   perpendicularEnd.locked = false;
   perpendicularStart.locked = false;
-
-  const longLine = {
-    start: {
-      x: start.x,
-      y: start.y,
-    },
-    end: {
-      x: end.x,
-      y: end.y,
-    },
-  };
-
-  const perpendicularLine = {
-    start: {
-      x: perpendicularStart.x,
-      y: perpendicularStart.y,
-    },
-    end: {
-      x: perpendicularEnd.x,
-      y: perpendicularEnd.y,
-    },
-  };
-
-  const intersection = external.cornerstoneMath.lineSegment.intersectLine(
-    longLine,
-    perpendicularLine
-  );
-
-  if (!intersection) {
-    if (distance(movedPoint, start) > distance(movedPoint, end)) {
-      perpendicularStart.x = adjustedLineP2.x + distanceFromMoved * dy;
-      perpendicularStart.y = adjustedLineP2.y - distanceFromMoved * dx;
-      perpendicularEnd.x = perpendicularStart.x - total * dy;
-      perpendicularEnd.y = perpendicularStart.y + total * dx;
-    } else {
-      perpendicularStart.x = adjustedLineP1.x + distanceFromMoved * dy;
-      perpendicularStart.y = adjustedLineP1.y - distanceFromMoved * dx;
-      perpendicularEnd.x = perpendicularStart.x - total * dy;
-      perpendicularEnd.y = perpendicularStart.y + total * dx;
-    }
-  }
 
   return true;
 }

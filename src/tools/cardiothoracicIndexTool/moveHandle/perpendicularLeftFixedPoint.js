@@ -1,17 +1,15 @@
 import external from './../../../externalModules.js';
+import getSpPoint from '../utils/getSpPoint.js';
 
 // Move perpendicular line start point
 export default function(movedPoint, data) {
   const { distance } = external.cornerstoneMath.point;
-  const { start, end, perpendicularStart, perpendicularEnd } = data.handles;
+  const { start, end, leftStart, leftEnd, perpendicularEnd, perpendicularStart } = data.handles;
 
   const fudgeFactor = 1;
-  const fixedPoint = perpendicularEnd;
+  const fixedPoint = leftEnd;
 
-  const distanceFromFixed = external.cornerstoneMath.lineSegment.distanceToPoint(
-    data.handles,
-    fixedPoint
-  );
+  const distanceFromFixed = 0;
   const distanceFromMoved = external.cornerstoneMath.lineSegment.distanceToPoint(
     data.handles,
     movedPoint
@@ -29,6 +27,7 @@ export default function(movedPoint, data) {
     return false;
   }
 
+  // check that new point is on right side
   const cross = new external.cornerstoneMath.Vector3();
   const vecA = { x: end.x-start.x, y: end.y-start.y, z: 0 };
   const vecB = { x: movedPoint.x-start.x, y: movedPoint.y-start.y, z: 0 };
@@ -49,13 +48,16 @@ export default function(movedPoint, data) {
     y: end.y + fudgeFactor * dy,
   };
 
-  perpendicularStart.x = movedPoint.x;
-  perpendicularStart.y = movedPoint.y;
-  perpendicularEnd.x = movedPoint.x - total * dy;
-  perpendicularEnd.y = movedPoint.y + total * dx;
+  // proposed new position for left line
+  leftStart.x = movedPoint.x;
+  leftStart.y = movedPoint.y;
+  leftEnd.x = movedPoint.x - distanceFromMoved * dy;
+  leftEnd.y = movedPoint.y + distanceFromMoved * dx;
+
+  // mark that handle has been modified (must be another variable?)
   perpendicularEnd.locked = false;
   perpendicularStart.locked = false;
-
+  
   const longLine = {
     start: {
       x: start.x,
@@ -66,34 +68,28 @@ export default function(movedPoint, data) {
       y: end.y,
     },
   };
-
-  const perpendicularLine = {
-    start: {
-      x: perpendicularStart.x,
-      y: perpendicularStart.y,
-    },
-    end: {
-      x: perpendicularEnd.x,
-      y: perpendicularEnd.y,
-    },
-  };
-
-  const intersection = external.cornerstoneMath.lineSegment.intersectLine(
-    longLine,
-    perpendicularLine
-  );
+  
+  // use projected point in vertical line to check if new point is on a
+  //   valid new position
+  const pointInLine = getSpPoint(longLine.start,longLine.end,movedPoint);
+  const lengthSp = distance(start, pointInLine);
+  const lengthEp = distance(end, pointInLine);
+  const intersection = length > lengthSp && length > lengthEp;
 
   if (!intersection) {
+
+    // if new point exceeds limits of vertical line, put it perpendicular to
+    //     nearest vertical vertex
     if (distance(movedPoint, start) > distance(movedPoint, end)) {
-      perpendicularStart.x = adjustedLineP2.x + distanceFromMoved * dy;
-      perpendicularStart.y = adjustedLineP2.y - distanceFromMoved * dx;
-      perpendicularEnd.x = perpendicularStart.x - total * dy;
-      perpendicularEnd.y = perpendicularStart.y + total * dx;
+      leftStart.x = adjustedLineP2.x + distanceFromMoved * dy;
+      leftStart.y = adjustedLineP2.y - distanceFromMoved * dx;
+      leftEnd.x = leftStart.x - total * dy;
+      leftEnd.y = leftStart.y + total * dx;
     } else {
-      perpendicularStart.x = adjustedLineP1.x + distanceFromMoved * dy;
-      perpendicularStart.y = adjustedLineP1.y - distanceFromMoved * dx;
-      perpendicularEnd.x = perpendicularStart.x - total * dy;
-      perpendicularEnd.y = perpendicularStart.y + total * dx;
+      leftStart.x = adjustedLineP1.x + distanceFromMoved * dy;
+      leftStart.y = adjustedLineP1.y - distanceFromMoved * dx;
+      leftEnd.x = leftStart.x - total * dy;
+      leftEnd.y = leftStart.y + total * dx;
     }
   }
 
