@@ -82,6 +82,17 @@ export default function(evt, interactionType) {
 
         triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, modifiedEventData);
         triggerEvent(element, EVENTS.MEASUREMENT_COMPLETED, modifiedEventData);
+
+        // send imex finish event
+        const eventType = EVENTS.MEASUREMENT_FINISHED;
+        if (measurementData.complete) {
+          const endEventData = {
+            toolType: this.name,
+            element: element,
+            measurementData: measurementData
+          };
+          triggerEvent(element, eventType, endEventData);
+        }
       },
     },
     interactionType
