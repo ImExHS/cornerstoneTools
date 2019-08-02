@@ -17,6 +17,16 @@ import getPixelSpacing from './../../util/getPixelSpacing';
 import roundToDecimal from '../../util/roundToDecimal.js';
 import drawTextBox from '../../util/drawTextBox.js';
 
+
+function lineLength( start, end, rowPixelSpacing, colPixelSpacing ){
+
+    // Calculate the long axis length
+    const dx = (start.x - end.x) * (colPixelSpacing || 1);
+    const dy = (start.y - end.y) * (rowPixelSpacing || 1);
+    let length = Math.sqrt(dx * dx + dy * dy);
+    return length;
+}
+
 export default function(evt) {
   const eventData = evt.detail;
   const { element, canvasContext, image } = eventData;
@@ -187,10 +197,9 @@ const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
     suffix = ' pixels';
   }
 
-  const { distance } = external.cornerstoneMath.point;  
-  let a = distance( data.handles.leftStart, data.handles.leftEnd );
-  let b = distance( data.handles.rightStart, data.handles.rightEnd );
-  let c = distance( data.handles.perpendicularStart, data.handles.perpendicularEnd );
+  let a = lineLength( data.handles.leftStart, data.handles.leftEnd, rowPixelSpacing, colPixelSpacing );
+  let b = lineLength( data.handles.rightStart, data.handles.rightEnd, rowPixelSpacing, colPixelSpacing );
+  let c = lineLength( data.handles.perpendicularStart, data.handles.perpendicularEnd, rowPixelSpacing, colPixelSpacing );
   a = roundToDecimal(a, 3);
   b = roundToDecimal(b, 3);
   c = roundToDecimal(c, 3);
