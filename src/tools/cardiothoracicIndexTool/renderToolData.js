@@ -17,6 +17,16 @@ import getPixelSpacing from './../../util/getPixelSpacing';
 import roundToDecimal from '../../util/roundToDecimal.js';
 import drawTextBox from '../../util/drawTextBox.js';
 
+
+function lineLength( start, end, rowPixelSpacing, colPixelSpacing ){
+
+    // Calculate the long axis length
+    const dx = (start.x - end.x) * (colPixelSpacing || 1);
+    const dy = (start.y - end.y) * (rowPixelSpacing || 1);
+    let length = Math.sqrt(dx * dx + dy * dy);
+    return length;
+}
+
 export default function(evt) {
   const eventData = evt.detail;
   const { element, canvasContext, image } = eventData;
@@ -121,7 +131,7 @@ export default function(evt) {
       const dyA  = leftStart.y - leftEnd.y;
       if (dxA !== 0 || dyA !== 0) {
         const x = (leftStart.x + leftEnd.x) / 2.0;
-        const y = (leftStart.y + leftEnd.y) / 2.0 - 10;
+        const y = (leftStart.y + leftEnd.y) / 2.0 - 20;
         const posTextA = { x, y };
         const lineCoordsA = external.cornerstone.pixelToCanvas(element, posTextA);
         drawTextBox(context, 'A', lineCoordsA.x, lineCoordsA.y, color, letterOptions);
@@ -132,7 +142,7 @@ export default function(evt) {
       const dyB  = rightStart.y - rightEnd.y;
       if (dxB !== 0 || dyB !== 0) {
         const x = (rightStart.x + rightEnd.x) / 2.0;
-        const y = (rightStart.y + rightEnd.y) / 2.0 - 10;
+        const y = (rightStart.y + rightEnd.y) / 2.0 - 20;
         const posTextB = { x, y };
         const lineCoordsB = external.cornerstone.pixelToCanvas(element, posTextB);
         drawTextBox(context, 'B', lineCoordsB.x, lineCoordsB.y, color, letterOptions);
@@ -143,7 +153,7 @@ export default function(evt) {
       const dyC  = perpendicularStart.y - perpendicularEnd.y;
       if (dxC !== 0 || dyC !== 0) {
         const x = (perpendicularStart.x + perpendicularEnd.x) / 2.0;
-        const y = (perpendicularStart.y + perpendicularEnd.y) / 2.0 + 10;
+        const y = (perpendicularStart.y + perpendicularEnd.y) / 2.0 + 20;
         const posTextC = { x, y };
         const lineCoordsC = external.cornerstone.pixelToCanvas(element, posTextC);
         drawTextBox(context, 'C', lineCoordsC.x, lineCoordsC.y, color, letterOptions);
@@ -157,8 +167,8 @@ export default function(evt) {
       // So that it sits beside the length tool handle
       const xOffset = 10;
       const textBoxAnchorPoints = handles => [
-        handles.start,
-        handles.end,
+        // handles.start,
+        // handles.end,
         handles.perpendicularStart,
         handles.perpendicularEnd,
       ];
@@ -187,10 +197,9 @@ const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
     suffix = ' pixels';
   }
 
-  const { distance } = external.cornerstoneMath.point;  
-  let a = distance( data.handles.leftStart, data.handles.leftEnd );
-  let b = distance( data.handles.rightStart, data.handles.rightEnd );
-  let c = distance( data.handles.perpendicularStart, data.handles.perpendicularEnd );
+  let a = lineLength( data.handles.leftStart, data.handles.leftEnd, rowPixelSpacing, colPixelSpacing );
+  let b = lineLength( data.handles.rightStart, data.handles.rightEnd, rowPixelSpacing, colPixelSpacing );
+  let c = lineLength( data.handles.perpendicularStart, data.handles.perpendicularEnd, rowPixelSpacing, colPixelSpacing );
   a = roundToDecimal(a, 3);
   b = roundToDecimal(b, 3);
   c = roundToDecimal(c, 3);

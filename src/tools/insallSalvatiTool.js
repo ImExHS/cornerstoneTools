@@ -62,27 +62,31 @@ export default class extends baseAnnotationTool {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: false
+          active: false,
+          allowedOutsideImage: false
         },
         end: {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: true
+          active: true,
+          allowedOutsideImage: false
         },
         start2: {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
           active: false,
-          drawnIndependently: true
+          drawnIndependently: true,
+          allowedOutsideImage: false
         },
         end2: {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
           active: false,
-          drawnIndependently: true
+          drawnIndependently: true,
+          allowedOutsideImage: false
         },
         textBox: {
           active: false,
@@ -223,8 +227,7 @@ export default class extends baseAnnotationTool {
           data.handles.textBox,
           text,
           data.handles,
-          textBoxAnchorPointLine1,
-          textBoxAnchorPointLine2,
+          textBoxAnchorPoints,
           color,
           lineWidth,
           0,
@@ -363,16 +366,14 @@ export default class extends baseAnnotationTool {
       measurementData,
       toMoveHandle,
       () => {
+
         measurementData.active = false;
         measurementData.handles.end.active = true;
 
-        // TODO: `anyHandlesOutsideImage` deletion should be a config setting
-        // TODO: Maybe globally? Mayber per tool?
-        // If any handle is outside image, delete and abort
-        if (anyHandlesOutsideImage(eventData, measurementData.handles)) {
-          // Delete the measurement
-          removeToolState(element, this.name, measurementData);
-        }
+        // if (anyHandlesOutsideImage(eventData, measurementData.handles)) {
+        //   // Delete the measurement
+        //   removeToolState(element, this.name, measurementData);
+        // }
         const eventType = EVENTS.MEASUREMENT_FINISHED;
 
         toMoveHandle.isMoving = false;
@@ -465,7 +466,7 @@ export default class extends baseAnnotationTool {
   }
  
   drawSalvatiTextBox (context, element, textBox, text,
-    handles, textBoxAnchorPointsL1, textBoxAnchorPointsL2, color, lineWidth, xOffset, yCenter) {
+    handles, textBoxAnchorPoints, color, lineWidth, xOffset, yCenter) {
 
     const cornerstone = external.cornerstone;
     const textCoords = cornerstone.pixelToCanvas(element, textBox);
@@ -507,12 +508,9 @@ export default class extends baseAnnotationTool {
     // Draw the text box
     textBox.boundingBox = drawTextBox(context, text, textCoords.x, textCoords.y, color, options);
     if (textBox.hasMoved) {
-      // Draw dashed line between first line and text
-      const linkAnchorPointsL1 = textBoxAnchorPointsL1(handles).map((h) => cornerstone.pixelToCanvas(element, h));
-      drawLink(linkAnchorPointsL1, textCoords, textBox.boundingBox, context, color, lineWidth);
-      // Draw dashed line between second line and text
-      const linkAnchorPointsL2 = textBoxAnchorPointsL2(handles).map((h) => cornerstone.pixelToCanvas(element, h));
-      drawLink(linkAnchorPointsL2, textCoords, textBox.boundingBox, context, color, lineWidth);
+      // Draw dashed line between lines and text
+      const linkAnchorPoints = textBoxAnchorPoints(handles).map((h) => cornerstone.pixelToCanvas(element, h));
+      drawLink(linkAnchorPoints, textCoords, textBox.boundingBox, context, color, lineWidth);
     }
   }
 }
