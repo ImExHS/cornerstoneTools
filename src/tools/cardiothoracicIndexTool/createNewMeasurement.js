@@ -30,7 +30,7 @@ export default function(mouseEventData) {
       leftEnd: getHandle(x, y, 5),
       rightStart: getHandle(x, y, 6),
       rightEnd: getHandle(x, y, 7),
-      textBox: getHandle(x - 100, y - 70, null, {
+      textBox: getHandle(x - 120, y - 70, null, {
         highlight: false,
         hasMoved: true,
         active: false,
