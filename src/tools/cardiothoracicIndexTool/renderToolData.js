@@ -131,7 +131,7 @@ export default function(evt) {
       const dyA  = leftStart.y - leftEnd.y;
       if (dxA !== 0 || dyA !== 0) {
         const x = (leftStart.x + leftEnd.x) / 2.0;
-        const y = (leftStart.y + leftEnd.y) / 2.0 - 10;
+        const y = (leftStart.y + leftEnd.y) / 2.0 - 20;
         const posTextA = { x, y };
         const lineCoordsA = external.cornerstone.pixelToCanvas(element, posTextA);
         drawTextBox(context, 'A', lineCoordsA.x, lineCoordsA.y, color, letterOptions);
@@ -142,7 +142,7 @@ export default function(evt) {
       const dyB  = rightStart.y - rightEnd.y;
       if (dxB !== 0 || dyB !== 0) {
         const x = (rightStart.x + rightEnd.x) / 2.0;
-        const y = (rightStart.y + rightEnd.y) / 2.0 - 10;
+        const y = (rightStart.y + rightEnd.y) / 2.0 - 20;
         const posTextB = { x, y };
         const lineCoordsB = external.cornerstone.pixelToCanvas(element, posTextB);
         drawTextBox(context, 'B', lineCoordsB.x, lineCoordsB.y, color, letterOptions);
@@ -153,7 +153,7 @@ export default function(evt) {
       const dyC  = perpendicularStart.y - perpendicularEnd.y;
       if (dxC !== 0 || dyC !== 0) {
         const x = (perpendicularStart.x + perpendicularEnd.x) / 2.0;
-        const y = (perpendicularStart.y + perpendicularEnd.y) / 2.0 + 10;
+        const y = (perpendicularStart.y + perpendicularEnd.y) / 2.0 + 20;
         const posTextC = { x, y };
         const lineCoordsC = external.cornerstone.pixelToCanvas(element, posTextC);
         drawTextBox(context, 'C', lineCoordsC.x, lineCoordsC.y, color, letterOptions);
@@ -167,8 +167,8 @@ export default function(evt) {
       // So that it sits beside the length tool handle
       const xOffset = 10;
       const textBoxAnchorPoints = handles => [
-        handles.start,
-        handles.end,
+        // handles.start,
+        // handles.end,
         handles.perpendicularStart,
         handles.perpendicularEnd,
       ];

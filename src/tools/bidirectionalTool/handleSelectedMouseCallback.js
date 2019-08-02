@@ -64,7 +64,7 @@ export default function(evt) {
       handle.moving = true;
 
       // Invert handles if needed
-      // handle = invertHandles(eventData, data, handle);
+      handle = invertHandles(eventData, data, handle);
 
       /* Hide the cursor to improve precision while resizing the line or set to move
          if dragging text box
