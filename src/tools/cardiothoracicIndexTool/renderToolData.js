@@ -13,9 +13,11 @@ import {
   drawLine,
 } from './../../util/drawing.js';
 import drawLinkedTextBox from './../../util/drawLinkedTextBox.js';
+import drawTextBox from './../../util/drawTextBox.js';
+import drawLink from './../../util/drawLink.js';
 import getPixelSpacing from './../../util/getPixelSpacing';
 import roundToDecimal from '../../util/roundToDecimal.js';
-import drawTextBox from '../../util/drawTextBox.js';
+// import drawTextBox from '../../util/drawTextBox.js';
 
 
 function lineLength( start, end, rowPixelSpacing, colPixelSpacing ){
@@ -165,7 +167,8 @@ export default function(evt) {
       // Draw the textbox
       // Move the textbox slightly to the right and upwards
       // So that it sits beside the length tool handle
-      const xOffset = 10;
+      const xOffset = 50;
+      const yOffset = 200;
       const textBoxAnchorPoints = handles => [
         // handles.start,
         // handles.end,
@@ -174,7 +177,7 @@ export default function(evt) {
       ];
       const textLines = getTextBoxText(data, rowPixelSpacing, colPixelSpacing);
 
-      drawLinkedTextBox(
+      drawCardioThoracicTextBox(
         context,
         element,
         textBox,
@@ -184,6 +187,7 @@ export default function(evt) {
         color,
         lineWidth,
         xOffset,
+        yOffset,
         true
       );
     });
@@ -216,3 +220,33 @@ const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
 
   return [aText, bText, cText, indexText];
 };
+
+const drawCardioThoracicTextBox = (context, element, textBox, text, handles, textBoxAnchorPoints,
+  color, lineWidth, xOffset, yOffset, yCenter) => {
+ 
+ const cornerstone = external.cornerstone;
+ // Convert the textbox Image coordinates into Canvas coordinates
+ const textCoords = cornerstone.pixelToCanvas(element, textBox);
+
+ if (xOffset) {
+   textCoords.x += xOffset;
+   textCoords.y += yOffset;
+ }
+
+ const options = {
+   centering: {
+     x: false,
+     y: false
+   }
+ };
+
+ // Draw the text box
+ textBox.boundingBox = drawTextBox(context, text, textCoords.x, textCoords.y, color, options);
+ if (textBox.hasMoved) {
+   // Identify the possible anchor points for the tool -> text line
+   const linkAnchorPoints = textBoxAnchorPoints(handles).map((h) => cornerstone.pixelToCanvas(element, h));
+
+   // Draw dashed link line between tool and text
+   drawLink(linkAnchorPoints, textCoords, textBox.boundingBox, context, color, lineWidth);
+ }
+}

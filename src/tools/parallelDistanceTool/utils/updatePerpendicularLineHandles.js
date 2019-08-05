@@ -21,8 +21,8 @@ export default function(eventData, data) {
       y: (start.y + end.y) / 2,
     };
     // Length of long-axis
-    const dx = (start.x - end.x) * (eventData.image.columnPixelSpacing || 1);
-    const dy = (start.y - end.y) * (eventData.image.rowPixelSpacing || 1);
+    const dx = (start.x - end.x);
+    const dy = (start.y - end.y);
     const length = Math.sqrt(dx * dx + dy * dy);
 
     const baseline_angle = Math.abs(Math.atan2(dy, dx));
@@ -48,13 +48,13 @@ export default function(eventData, data) {
 
     startX_p1 = start.x - dx / 4 - dx_perpenticular / 8;
     startY_p1 = start.y - dy / 4 - dy_perpenticular / 8;
-    endX_p1 = start.x - dx / 4 + dx_perpenticular;
-    endY_p1 = start.y - dy / 4 + dy_perpenticular;
+    endX_p1 = start.x - dx / 4 + dx_perpenticular / 2;
+    endY_p1 = start.y - dy / 4 + dy_perpenticular / 2;
 
     startX_p2 = start.x - (dx * 3) / 4 - dx_perpenticular / 8;
     startY_p2 = start.y - (dy * 3) / 4 - dy_perpenticular / 8;
-    endX_p2 = start.x - (dx * 3) / 4 + dx_perpenticular;
-    endY_p2 = start.y - (dy * 3) / 4 + dy_perpenticular;
+    endX_p2 = start.x - (dx * 3) / 4 + dx_perpenticular / 2;
+    endY_p2 = start.y - (dy * 3) / 4 + dy_perpenticular / 2;
   }
   data.handles.perpendicularStart.x = startX_p1;
   data.handles.perpendicularStart.y = startY_p1;
