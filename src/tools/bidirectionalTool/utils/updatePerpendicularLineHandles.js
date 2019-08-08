@@ -1,5 +1,6 @@
 // Update the  perpendicular line handles
 export default function(eventData, data) {
+
   if (!data.handles.perpendicularStart.locked) {
     return;
   }
@@ -40,4 +41,6 @@ export default function(eventData, data) {
   data.handles.perpendicularStart.y = startY;
   data.handles.perpendicularEnd.x = endX;
   data.handles.perpendicularEnd.y = endY;
+
+  data.invalidated = true;
 }
