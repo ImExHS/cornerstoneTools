@@ -3,11 +3,8 @@ import EVENTS from './../../events.js';
 import BaseTool from './BaseTool.js';
 import isToolActive from './../../store/isToolActive.js';
 import store from './../../store/index.js';
-import { getLogger } from '../../util/logger.js';
 
-const logger = getLogger('tools:BaseBrushTool');
-
-const { state, getters, setters } = store.modules.brush;
+const { configuration, getters, setters } = store.modules.segmentation;
 
 /**
  * @abstract
@@ -70,6 +67,7 @@ class BaseBrushTool extends BaseTool {
    * Event handler for MOUSE_DRAG event.
    *
    * @override
+   * @abstract
    * @event
    * @param {Object} evt - The event.
    */
@@ -89,6 +87,7 @@ class BaseBrushTool extends BaseTool {
    * Event handler for MOUSE_DOWN event.
    *
    * @override
+   * @abstract
    * @event
    * @param {Object} evt - The event.
    */
@@ -107,9 +106,9 @@ class BaseBrushTool extends BaseTool {
   }
 
   /**
-   * Initialise painting with baseBrushTool
+   * Initialise painting with BaseBrushTool.
    *
-   * @protected
+   * @abstract
    * @event
    * @param {Object} evt - The event.
    * @returns {void}
@@ -135,6 +134,14 @@ class BaseBrushTool extends BaseTool {
     };
   }
 
+  /**
+   * End painting with BaseBrushTool.
+   *
+   * @abstract
+   * @event
+   * @param {Object} evt - The event.
+   * @returns {void}
+   */
   _endPainting(evt) {
     const {
       labelmap3D,
@@ -174,10 +181,15 @@ class BaseBrushTool extends BaseTool {
     }
   }
 
+  // ===================================================================
+  // Implementation interface
+  // ===================================================================
+
   /**
    * Event handler for MOUSE_MOVE event.
    *
    * @override
+   * @abstract
    * @event
    * @param {Object} evt - The event.
    */
@@ -188,25 +200,7 @@ class BaseBrushTool extends BaseTool {
   }
 
   /**
-   * Event handler for switching mode to passive;
-   *
-   * @override
-   * @event
-   * @param {Object} evt - The event.
-   */
-  // eslint-disable-next-line no-unused-vars
-  passiveCallback(evt) {
-    try {
-      external.cornerstone.updateImage(this.element);
-    } catch (error) {
-      // It is possible that the image has not been loaded
-      // when this is called.
-      return;
-    }
-  }
-
-  /**
-   * Used to redraw the tool's annotation data per render.
+   * Used to redraw the tool's cursor per render.
    *
    * @override
    * @param {Object} evt - The event.
@@ -222,9 +216,23 @@ class BaseBrushTool extends BaseTool {
     }
   }
 
-  // ===================================================================
-  // Implementation interface
-  // ===================================================================
+  /**
+   * Event handler for switching mode to passive.
+   *
+   * @override
+   * @event
+   * @param {Object} evt - The event.
+   */
+  // eslint-disable-next-line no-unused-vars
+  passiveCallback(evt) {
+    try {
+      external.cornerstone.updateImage(this.element);
+    } catch (error) {
+      // It is possible that the image has not been loaded
+      // when this is called.
+      return;
+    }
+  }
 
   /**
    * Event handler for MOUSE_UP during the drawing event loop.
@@ -293,7 +301,7 @@ class BaseBrushTool extends BaseTool {
   }
 
   // ===================================================================
-  // Segmentation API. This is effectively a wrapper around the store.
+  // Brush API. This is effectively a wrapper around the store.
   // ===================================================================
 
   /**
@@ -304,7 +312,7 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   increaseBrushSize() {
-    const oldRadius = state.radius;
+    const oldRadius = configuration.radius;
     let newRadius = Math.floor(oldRadius * 1.2);
 
     // If e.g. only 2 pixels big. Math.floor(2*1.2) = 2.
@@ -324,36 +332,10 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   decreaseBrushSize() {
-    const oldRadius = state.radius;
+    const oldRadius = configuration.radius;
     const newRadius = Math.floor(oldRadius * 0.8);
 
     setters.radius(newRadius);
-  }
-
-  get alpha() {
-    return state.alpha;
-  }
-
-  set alpha(value) {
-    const enabledElement = this._getEnabledElement();
-
-    state.alpha = value;
-    external.cornerstone.updateImage(enabledElement.element);
-  }
-
-  get alphaOfInactiveLabelmap() {
-    return state.alphaOfInactiveLabelmap;
-  }
-
-  set alphaOfInactiveLabelmap(value) {
-    const enabledElement = this._getEnabledElement();
-
-    state.alphaOfInactiveLabelmap = value;
-    external.cornerstone.updateImage(enabledElement.element);
-  }
-
-  _getEnabledElement() {
-    return external.cornerstone.getEnabledElement(this.element);
   }
 
   _isCtrlDown(eventData) {
