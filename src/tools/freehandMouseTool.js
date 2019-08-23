@@ -296,7 +296,7 @@ export default class extends baseAnnotationTool {
 
           // Store the bounding box information for the text box
           data.polyBoundingBox = polyBoundingBox;
-
+          data.bounds = bounds;
           // First, make sure this is not a color image, since no mean / standard
           // Deviation will be calculated for color images.
           if (!image.color) {
@@ -351,8 +351,12 @@ export default class extends baseAnnotationTool {
           if (!data.handles.textBox.hasMoved) {
             // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
             // Note that this calculates it in image coordinates
-            data.handles.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
-            data.handles.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
+            
+            data.handles.textBox.x = data.bounds.right;
+            data.handles.textBox.y = data.bounds.bottom;
+            
+            // data.handles.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
+            // data.handles.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
           }
 
           const text = textBoxText.call(this, data);
