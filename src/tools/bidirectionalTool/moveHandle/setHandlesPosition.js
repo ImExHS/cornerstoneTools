@@ -21,7 +21,7 @@ export default function(handle, eventData, data, distanceFromTool) {
   };
   if (handle.index === 0) {
     // If long-axis start point is moved
-    result = perpendicularBothFixedLeft(proposedPoint, data);
+    result = perpendicularBothFixedLeft(proposedPoint, data, eventData);
     if (result) {
       handle.x = proposedPoint.x;
       handle.y = proposedPoint.y;
@@ -31,7 +31,7 @@ export default function(handle, eventData, data, distanceFromTool) {
     }
   } else if (handle.index === 1) {
     // If long-axis end point is moved
-    result = perpendicularBothFixedRight(proposedPoint, data);
+    result = perpendicularBothFixedRight(proposedPoint, data, eventData);
     if (result) {
       handle.x = proposedPoint.x;
       handle.y = proposedPoint.y;
@@ -63,7 +63,7 @@ export default function(handle, eventData, data, distanceFromTool) {
     movedPoint = false;
 
     if (!outOfBounds) {
-      movedPoint = perpendicularLeftFixedPoint(proposedPoint, data);
+      movedPoint = perpendicularLeftFixedPoint(proposedPoint, data, eventData);
       if (!movedPoint) {
         eventData.currentPoints.image.x = data.handles.perpendicularStart.x;
         eventData.currentPoints.image.y = data.handles.perpendicularStart.y;
@@ -94,7 +94,7 @@ export default function(handle, eventData, data, distanceFromTool) {
     movedPoint = false;
 
     if (!outOfBounds) {
-      movedPoint = perpendicularRightFixedPoint(proposedPoint, data);
+      movedPoint = perpendicularRightFixedPoint(proposedPoint, data, eventData);
       if (!movedPoint) {
         eventData.currentPoints.image.x = data.handles.perpendicularEnd.x;
         eventData.currentPoints.image.y = data.handles.perpendicularEnd.y;

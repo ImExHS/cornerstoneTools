@@ -8,6 +8,8 @@ export default function(eventData, data) {
   let startX, startY, endX, endY;
 
   const { start, end } = data.handles;
+  const columnPixelSpacing = (eventData.image.columnPixelSpacing || 1);
+  const rowPixelSpacing = (eventData.image.rowPixelSpacing || 1);
 
   if (start.x === end.x && start.y === end.y) {
     startX = start.x;
@@ -17,24 +19,24 @@ export default function(eventData, data) {
   } else {
     // Mid point of long-axis line
     const mid = {
-      x: (start.x + end.x) / 2,
-      y: (start.y + end.y) / 2,
+      x: (start.x + end.x) * columnPixelSpacing / 2,
+      y: (start.y + end.y) * rowPixelSpacing / 2,
     };
 
     // Length of long-axis
-    const dx = (start.x - end.x) * (eventData.image.columnPixelSpacing || 1);
-    const dy = (start.y - end.y) * (eventData.image.rowPixelSpacing || 1);
+    const dx = (start.x - end.x) * columnPixelSpacing;
+    const dy = (start.y - end.y) * rowPixelSpacing;
     const length = Math.sqrt(dx * dx + dy * dy);
 
-    const vectorX = (start.x - end.x) / length;
-    const vectorY = (start.y - end.y) / length;
+    const vectorX = dx / length;
+    const vectorY = dy / length;
 
     const perpendicularLineLength = length / 2;
 
-    startX = mid.x + (perpendicularLineLength / 2) * vectorY;
-    startY = mid.y - (perpendicularLineLength / 2) * vectorX;
-    endX = mid.x - (perpendicularLineLength / 2) * vectorY;
-    endY = mid.y + (perpendicularLineLength / 2) * vectorX;
+    startX = (mid.x + (perpendicularLineLength / 2) * vectorY) / columnPixelSpacing;
+    startY = (mid.y - (perpendicularLineLength / 2) * vectorX) / rowPixelSpacing;
+    endX = (mid.x - (perpendicularLineLength / 2) * vectorY) / columnPixelSpacing;
+    endY = (mid.y + (perpendicularLineLength / 2) * vectorX) / rowPixelSpacing;
   }
 
   data.handles.perpendicularStart.x = startX;

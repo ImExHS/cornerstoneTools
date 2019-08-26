@@ -6,6 +6,8 @@ export default function(image, handles, handleKey, mmStep, mmLimit = 1) {
     return;
   }
 
+  console.log('xxxxxxxxxxxxxxxxxxx reposition bidirectional');
+
   // Defines how much the arm will increase/decrease
   const columnPixelSpacing = (image && image.columnPixelSpacing) || 1;
   const rowPixelSpacing = (image && image.rowPixelSpacing) || 1;

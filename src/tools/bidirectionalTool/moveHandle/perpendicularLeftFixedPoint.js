@@ -1,9 +1,12 @@
 import external from './../../../externalModules.js';
 
 // Move perpendicular line start point
-export default function(movedPoint, data) {
+export default function(movedPoint, data, eventData) {
   const { distance } = external.cornerstoneMath.point;
   const { start, end, perpendicularStart, perpendicularEnd } = data.handles;
+
+  const columnPixelSpacing = (eventData.image.columnPixelSpacing || 1);
+  const rowPixelSpacing = (eventData.image.rowPixelSpacing || 1);
 
   const fudgeFactor = 1;
   const fixedPoint = perpendicularEnd;

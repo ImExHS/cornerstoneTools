@@ -1,9 +1,12 @@
 import external from './../../../externalModules.js';
 
 // Move long-axis end point
-export default function(proposedPoint, data) {
+export default function(proposedPoint, data, eventData) {
   const { distance } = external.cornerstoneMath.point;
   const { start, end, perpendicularStart, perpendicularEnd } = data.handles;
+
+  const columnPixelSpacing = (eventData.image.columnPixelSpacing || 1);
+  const rowPixelSpacing = (eventData.image.rowPixelSpacing || 1);
 
   const longLine = {
     start: {
