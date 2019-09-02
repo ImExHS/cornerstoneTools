@@ -26,6 +26,8 @@ export default function(mouseEventData) {
       end: getHandle(x, y, 1, { active: true }),
       perpendicularStart: getHandle(x, y, 2, { locked: true }),
       perpendicularEnd: getHandle(x, y, 3),
+      perpendicularStart2: getHandle(x, y, 4),
+      perpendicularEnd2: getHandle(x, y, 5),
       textBox: getHandle(x - 50, y - 70, null, {
         highlight: false,
         hasMoved: true,

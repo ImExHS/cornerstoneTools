@@ -3,6 +3,8 @@ import perpendicularBothFixedLeft from './perpendicularBothFixedLeft.js';
 import perpendicularBothFixedRight from './perpendicularBothFixedRight.js';
 import perpendicularLeftFixedPoint from './perpendicularLeftFixedPoint.js';
 import perpendicularRightFixedPoint from './perpendicularRightFixedPoint.js';
+import perpendicularLeftFixedPoint2 from './perpendicularLeftFixedPoint2.js';
+import perpendicularRightFixedPoint2 from './perpendicularRightFixedPoint2.js';
 
 // Sets position of handles(start, end, perpendicularStart, perpendicularEnd)
 export default function(handle, eventData, data, distanceFromTool) {
@@ -160,6 +162,18 @@ export default function(handle, eventData, data, distanceFromTool) {
         eventData.currentPoints.image.x = data.handles.perpendicularEnd.x;
         eventData.currentPoints.image.y = data.handles.perpendicularEnd.y;
       }
+    }
+  } else if (handle.index === 4) {
+    movedPoint = perpendicularLeftFixedPoint2(proposedPoint, data);
+    if (!movedPoint) {
+      eventData.currentPoints.image.x = data.handles.leftStart.x;
+      eventData.currentPoints.image.y = data.handles.leftStart.y;
+    }
+  } else if (handle.index === 5) {
+    movedPoint = perpendicularRightFixedPoint2(proposedPoint, data);
+    if (!movedPoint) {
+      eventData.currentPoints.image.x = data.handles.rightStart.x;
+      eventData.currentPoints.image.y = data.handles.rightStart.y;
     }
   }
 }

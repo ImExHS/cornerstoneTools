@@ -1,3 +1,0 @@
-# Layered Image Stacks
-
-...

@@ -139,29 +139,16 @@ function renderSegmentation(evt, segIndex, segData) {
     );
   }
 
+  if (toolData.data[segIndex].invalidated) {
+    createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex);
+  }
+}
+
+function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
   const eventData = evt.detail;
   const element = eventData.element;
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
-  if (
-    toolData.data[segIndex].invalidated ||
-    state.invalidatedEnabledElements.includes(enabledElement.uuid)
-  ) {
-    createNewBitmapAndQueueRenderOfSegmentation(
-      eventData,
-      enabledElement.uuid,
-      toolData,
-      segIndex
-    );
-  }
-}
-
-function createNewBitmapAndQueueRenderOfSegmentation(
-  { image: eventImage, element },
-  enabledElementUID,
-  toolData,
-  segIndex
-) {
   const pixelData = toolData.data[segIndex].pixelData;
   const imageSpecificSegmentationAlpha = toolData.data[segIndex].alpha;
 
@@ -173,7 +160,10 @@ function createNewBitmapAndQueueRenderOfSegmentation(
   const colormap = external.cornerstone.colors.getColormap(colormapId);
   const colorLutTable = [[0, 0, 0, 0], colormap.getColor(segIndex)];
 
-  const imageData = new ImageData(eventImage.width, eventImage.height);
+  const imageData = new ImageData(
+    eventData.image.width,
+    eventData.image.height
+  );
   const image = {
     stats: {},
     minPixelValue: 0,
@@ -195,16 +185,13 @@ function createNewBitmapAndQueueRenderOfSegmentation(
 
   window.createImageBitmap(imageData).then(newImageBitmap => {
     setters.imageBitmapCacheForElement(
-      enabledElementUID,
+      enabledElement.uuid,
       segIndex,
       newImageBitmap
     );
     toolData.data[segIndex].invalidated = false;
-    state.invalidatedEnabledElements = state.invalidatedEnabledElements.filter(
-      iee => iee !== enabledElementUID
-    );
 
-    external.cornerstone.updateImage(element);
+    external.cornerstone.updateImage(eventData.element);
   });
 }
 

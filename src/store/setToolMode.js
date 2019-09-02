@@ -404,9 +404,10 @@ function _resolveMouseInputConflicts(tool, element, options) {
  *
  * @param {Object} tool
  * @param {HTMLElement} element
+ * @param {Object} options
  * @returns {undefined}
  */
-function _resolveTouchInputConflicts(tool, element) {
+function _resolveTouchInputConflicts(tool, element, options) {
   const activeTouchTool = store.state.tools.find(
     t =>
       t.element === element &&
@@ -445,9 +446,10 @@ function _resolveTouchInputConflicts(tool, element) {
  *
  * @param {Object} tool
  * @param {HTMLElement} element
+ * @param {Object} options
  * @returns {undefined}
  */
-function _resolveMultiTouchInputConflicts(tool, element) {
+function _resolveMultiTouchInputConflicts(tool, element, options) {
   const activeMultiTouchTool = store.state.tools.find(
     t =>
       t.element === element &&
@@ -497,7 +499,12 @@ function _resolveMultiTouchInputConflicts(tool, element) {
  * @param {(Object|number)} options
  * @returns {undefined}
  */
-function _resolveGenericInputConflicts(interactionType, tool, element) {
+function _resolveGenericInputConflicts(
+  interactionType,
+  tool,
+  element,
+  options
+) {
   const interactionTypeFlag = `is${interactionType}Active`;
   const activeToolWithActiveInteractionType = store.state.tools.find(
     t =>

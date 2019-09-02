@@ -58,22 +58,16 @@ export default function(
   handle.active = true;
   state.isToolLocked = true;
 
-  function moveHandler(evt) {
-    _moveHandler(
-      toolName,
-      annotation,
-      handle,
-      options,
-      interactionType,
-      {
-        moveHandler,
-        moveEndHandler,
-      },
-      evt
-    );
-  }
+  const moveHandler = _moveHandler.bind(
+    this,
+    toolName,
+    annotation,
+    handle,
+    options,
+    interactionType
+  );
   // So we don't need to inline the entire `moveEndEventHandler` function
-  function moveEndHandler(evt) {
+  const moveEndHandler = evt => {
     _moveEndHandler(
       toolName,
       annotation,
@@ -86,11 +80,14 @@ export default function(
       },
       evt
     );
-  }
+  };
 
   // Add event listeners
   _moveEvents[interactionType].forEach(eventType => {
     element.addEventListener(eventType, moveHandler);
+  });
+  _moveEndEvents[interactionType].forEach(eventType => {
+    element.addEventListener(eventType, moveEndHandler);
   });
   element.addEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
 }
@@ -101,15 +98,9 @@ function _moveHandler(
   handle,
   options,
   interactionType,
-  { moveEndHandler },
   evt
 ) {
   const { currentPoints, image, element, buttons } = evt.detail;
-  // Add moveEndEvent Handler when move trigger
-
-  _moveEndEvents[interactionType].forEach(eventType => {
-    element.addEventListener(eventType, moveEndHandler);
-  });
   const page = currentPoints.page;
   const fingerOffset = -57;
   const targetLocation = external.cornerstone.pageToPixel(

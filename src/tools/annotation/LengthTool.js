@@ -1,3 +1,4 @@
+import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
@@ -46,7 +47,9 @@ export default class LengthTool extends BaseAnnotationTool {
 
     if (!goodEventData) {
       logger.error(
-        `required eventData not supplied to tool ${this.name}'s createNewMeasurement`
+        `required eventData not supplied to tool ${
+          this.name
+        }'s createNewMeasurement`
       );
 
       return;
@@ -224,15 +227,13 @@ export default class LengthTool extends BaseAnnotationTool {
 
     function textBoxText(data, rowPixelSpacing, colPixelSpacing) {
       // Set the length text suffix depending on whether or not pixelSpacing is available
-      let suffix = 'mm';
+      let suffix = ' mm';
 
       if (!rowPixelSpacing || !colPixelSpacing) {
-        suffix = 'pixels';
+        suffix = ' pixels';
       }
 
-      data.unit = suffix;
-
-      return `${data.length.toFixed(2)} ${suffix}`;
+      return `${data.length.toFixed(2)}${suffix}`;
     }
 
     function textBoxAnchorPoints(handles) {
