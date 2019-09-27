@@ -54,15 +54,6 @@ export default function(evt) {
 
     color = data.active ? activeColor : toolColors.getToolColor();
 
-    // Calculate the data measurements
-    if (data.invalidated === true) {
-      if (data.longestDiameter && data.shortestDiameter) {
-        throttledUpdateCachedStats(image, element, data);
-      } else {
-        updateCachedStats(image, element, data);
-      }
-    }
-
     draw(context, context => {
       // Configurable shadow
       setShadow(context, this.configuration);
@@ -121,6 +112,15 @@ export default function(evt) {
 
       // Draw the handles
       drawHandles(context, eventData, data.handles, handleOptions);
+
+      // Calculate the data measurements
+      if (data.invalidated === true) {
+        if (data.longestDiameter && data.shortestDiameter) {
+          throttledUpdateCachedStats(image, element, data);
+        } else {
+          updateCachedStats(image, element, data);
+        }
+      }
 
       let letterOptions = {
         centering: {
