@@ -298,17 +298,18 @@ const updateCachedStats = (image, element, data) => {
 
   const intersectionP1 = getIntersectionPoints(data)[0];
   const intersectionP2 = getIntersectionPoints(data)[1];
+  const intersectionA1 = getIntersectionPoints(data)[2];
+  const intersectionA2 = getIntersectionPoints(data)[3];
 
-  if (intersectionP1 && intersectionP2) {
+  if (intersectionP1 && intersectionP2 && intersectionA1 && intersectionA2) {
     const sideA = {
-      x:
-        (data.handles.angleStart.x - data.handles.angleEnd.x) * colPixelSpacing,
-      y: (data.handles.angleStart.y - data.handles.angleEnd.y) * rowPixelSpacing
+      x: (intersectionA1.x - data.handles.angleEnd.x) * colPixelSpacing,
+      y: (intersectionA1.y - data.handles.angleEnd.y) * rowPixelSpacing
     };
 
     const sideB = {
-      x: (intersectionP1.x - data.handles.angleStart.x) * colPixelSpacing,
-      y: (intersectionP1.y - data.handles.angleStart.y) * rowPixelSpacing
+      x: (intersectionP1.x - intersectionA1.x) * colPixelSpacing,
+      y: (intersectionP1.y - intersectionA1.y) * rowPixelSpacing
     };
 
     const sideC = {
@@ -317,17 +318,13 @@ const updateCachedStats = (image, element, data) => {
     };
 
     const sideA2 = {
-      x:
-        (data.handles.angleStart2.x - data.handles.angleEnd2.x) *
-        colPixelSpacing,
-      y:
-        (data.handles.angleStart2.y - data.handles.angleEnd2.y) *
-        rowPixelSpacing
+      x: (intersectionA2.x - data.handles.angleEnd2.x) * colPixelSpacing,
+      y: (intersectionA2.y - data.handles.angleEnd2.y) * rowPixelSpacing
     };
 
     const sideB2 = {
-      x: (intersectionP2.x - data.handles.angleStart2.x) * colPixelSpacing,
-      y: (intersectionP2.y - data.handles.angleStart2.y) * rowPixelSpacing
+      x: (intersectionP2.x - intersectionA2.x) * colPixelSpacing,
+      y: (intersectionP2.y - intersectionA2.y) * rowPixelSpacing
     };
 
     const sideC2 = {
