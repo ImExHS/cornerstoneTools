@@ -16,6 +16,8 @@ import drawHandles from '../manipulators/drawHandles.js';
 import moveNewHandle from '../manipulators/moveNewHandle.js';
 import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
+import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
+
 // Drawing
 import {
   getNewContext,
@@ -26,11 +28,11 @@ import {
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import roundToDecimal from '../util/roundToDecimal.js';
-import EVENTS from './../events.js';
+import EVENTS from '../events.js';
 import triggerEvent from '../util/triggerEvent.js';
 
 export default class extends baseAnnotationTool {
-  constructor(name = 'anteFemoral') {
+  constructor(name = 'cobbAngleMV') {
     super({
       name,
       supportedInteractionTypes: ['mouse', 'touch']
@@ -52,6 +54,7 @@ export default class extends baseAnnotationTool {
       active: true,
       color: undefined,
       complete: false,
+      highlight: false,
       value: '',
       segElem: undefined,
       segElem2: undefined,
@@ -90,7 +93,7 @@ export default class extends baseAnnotationTool {
           movesIndependently: false,
           drawnIndependently: true,
           allowedOutsideImage: true,
-          hasBoundingBox: true
+          hasBoundingBox: true,
         }
       }
     };
@@ -110,7 +113,6 @@ export default class extends baseAnnotationTool {
     }
 
     const maybePending = this.getIncomplete(element);
-
     if (maybePending) {
       // measurement in progress
       return false;
@@ -203,12 +205,6 @@ export default class extends baseAnnotationTool {
 
     const enabledElements = this.synchronizationContext.getSourceElements();
 
-    // TODO: requires at least two enable elements?
-    // if ( enabledElements.length < 2 ) {
-    //   console.log('WARNING: Femoral tool requires at least two images');
-    //   return;
-    // }
-
     evt.preventDefault();
     evt.stopPropagation();
 
@@ -248,6 +244,8 @@ export default class extends baseAnnotationTool {
         active: true
       };
       toMoveHandle = measurementData.handles.end2;
+      this.associateElement( element, measurementData.handles.start2 );
+      this.associateElement( element, measurementData.handles.end2 );
 
       // add to state of current element
       if ( measurementData.segElem !== element ){
@@ -259,6 +257,17 @@ export default class extends baseAnnotationTool {
       measurementData.segImage = evt.detail.image;
       addToolState(element, this.name, measurementData);
       toMoveHandle = measurementData.handles.end;
+      this.associateElement( element, measurementData.handles.start );
+      this.associateElement( element, measurementData.handles.end );
+
+      measurementData.handles.textBox.reqElement = element;
+      measurementData.handles.textBox.pointNearHandle = function(element, handle, coords) {
+        if( element === handle.reqElement && handle.hasBoundingBox ){
+          return pointInsideBoundingBox(handle, coords);
+        }
+        return false; 
+      }
+
     }
 
     // MoveHandle, moveNewHandle, moveHandleTouch, and moveNewHandleTouch
@@ -267,10 +276,10 @@ export default class extends baseAnnotationTool {
       interactionType === 'mouse' ? moveNewHandle : moveNewHandleTouch;
 
     // Associate this data with this imageId so we can render it and manipulate it
-    if( measurementData.segElem ) {
+    if( measurementData.segElem == element) {
       external.cornerstone.updateImage(measurementData.segElem);
     }
-    if( measurementData.segElem2 ) {
+    if( measurementData.segElem2 == element) {
       external.cornerstone.updateImage(measurementData.segElem2);
     }
 
@@ -310,6 +319,22 @@ export default class extends baseAnnotationTool {
       }
     );
   }
+
+  associateElement( segElement, segPoint ) {
+
+    // associate handlers to element
+    segPoint.reqElement = segElement;
+    segPoint.pointNearHandle = function(element, handle, coords) {      
+      if(  element === handle.reqElement ){
+        const handleCanvas = external.cornerstone.pixelToCanvas(element, handle);
+        const distance = external.cornerstoneMath.point.distance(handleCanvas, coords);
+        if (distance <= 25) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }  
 
   onMeasureModified(ev) {
 
@@ -501,5 +526,11 @@ export default class extends baseAnnotationTool {
   disabledCallback(element) {
     element.removeEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
   }
+
+  toolSelectedCallback (evt, data, toolState) {
+    evt.preventDefault();
+    evt.stopPropagation();
+  }
+
 }
 

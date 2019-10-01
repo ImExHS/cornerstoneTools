@@ -38,7 +38,7 @@ export { default as triangulationTool } from './tools/triangulationTool.js';
 // export { default as brushEraserTool } from './tools/brushEraserTool.js';
 export { default as insallSalvatiTool } from './tools/insallSalvatiTool.js';
 export { default as cardiothoracicIndexTool } from './tools/cardiothoracicIndexTool.js';
-export { default as anteFemoralTool } from './tools/anteFemoralTool.js';
+export { default as cobbAngleMVTool } from './tools/cobbAngleMVTool.js';
 
 // END V3 EXPORTS
 
