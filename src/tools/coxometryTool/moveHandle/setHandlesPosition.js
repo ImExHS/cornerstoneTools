@@ -1,10 +1,12 @@
-import external from "../../../externalModules.js";
+import external from "./../../../externalModules.js";
 import perpendicularBothFixedLeft from "./perpendicularBothFixedLeft.js";
 import perpendicularBothFixedRight from "./perpendicularBothFixedRight.js";
 import perpendicularLeftFixedPoint from "./perpendicularLeftFixedPoint.js";
-import perpendicularLeftFixedEndPoint from "./perpendicularLeftFixedEndPoint.js";
 import perpendicularRightFixedPoint from "./perpendicularRightFixedPoint.js";
-import perpendicularRightFixedEndPoint from "./perpendicularRightFixedEndPoint.js";
+import perpendicularLeftFixedPoint2 from "./perpendicularLeftFixedPoint2.js";
+import perpendicularRightFixedPoint2 from "./perpendicularRightFixedPoint2.js";
+import angleLeftFixedPoint from "./angleLeftFixedPoint.js";
+import angleLeftFixedPoint2 from "./angleLeftFixedPoint2.js";
 
 // Sets position of handles(start, end, perpendicularStart, perpendicularEnd)
 export default function(handle, eventData, data, distanceFromTool) {
@@ -12,12 +14,14 @@ export default function(handle, eventData, data, distanceFromTool) {
   let outOfBounds;
   let result;
   let intersection;
+  let intersectionAn;
   let d1;
   let d2;
+  let d3;
 
   const longLine = {};
   const perpendicularLine = {};
-  const leftLine = {};
+  const angleLine = {};
   const proposedPoint = {
     x: eventData.currentPoints.image.x + distanceFromTool.x,
     y: eventData.currentPoints.image.y + distanceFromTool.y
@@ -44,6 +48,26 @@ export default function(handle, eventData, data, distanceFromTool) {
       eventData.currentPoints.image.y = handle.y;
     }
   } else if (handle.index === 2) {
+    outOfBounds = false;
+    // If perpendicular start point is moved
+    longLine.start = {
+      x: data.handles.start.x,
+      y: data.handles.start.y
+    };
+    longLine.end = {
+      x: data.handles.end.x,
+      y: data.handles.end.y
+    };
+
+    angleLine.start = {
+      x: data.handles.angleStart.x,
+      y: data.handles.angleStart.y
+    };
+    angleLine.end = {
+      x: data.handles.angleEnd.x,
+      y: data.handles.angleEnd.y
+    };
+
     perpendicularLine.start = {
       x: data.handles.perpendicularEnd.x,
       y: data.handles.perpendicularEnd.y
@@ -53,12 +77,71 @@ export default function(handle, eventData, data, distanceFromTool) {
       y: proposedPoint.y
     };
 
-    movedPoint = perpendicularLeftFixedEndPoint(proposedPoint, data);
-    if (!movedPoint) {
-      eventData.currentPoints.image.x = data.handles.perpendicularStart.x;
-      eventData.currentPoints.image.y = data.handles.perpendicularStart.y;
+    intersection = external.cornerstoneMath.lineSegment.intersectLine(
+      longLine,
+      perpendicularLine
+    );
+    intersectionAn = external.cornerstoneMath.lineSegment.intersectLine(
+      perpendicularLine,
+      angleLine
+    );
+    if (!intersection) {
+      perpendicularLine.end = {
+        x: data.handles.perpendicularStart.x,
+        y: data.handles.perpendicularStart.y
+      };
+
+      intersection = external.cornerstoneMath.lineSegment.intersectLine(
+        longLine,
+        perpendicularLine
+      );
+
+      d1 = external.cornerstoneMath.point.distance(
+        intersection,
+        data.handles.start
+      );
+      d2 = external.cornerstoneMath.point.distance(
+        intersection,
+        data.handles.end
+      );
+
+      if (!intersection || d1 < 3 || d2 < 3) {
+        outOfBounds = true;
+      }
+      // if (perpendicularLine.start.x >= angleLine.start.x) {
+      //   console.log('here');
+      //   outOfBounds = true;
+      // }
     }
-  } else if (handle.index === 3) {
+
+    // if (perpendicularLine.start.x > angleLine.start.x) {
+    //   console.log('here');
+    //   outOfBounds = true;
+    // }
+
+    movedPoint = false;
+
+    if (!outOfBounds) {
+      movedPoint = perpendicularLeftFixedPoint(proposedPoint, data);
+
+      if (!movedPoint) {
+        eventData.currentPoints.image.x = data.handles.perpendicularStart.x;
+        eventData.currentPoints.image.y = data.handles.perpendicularStart.y;
+      }
+    }
+  } else if (handle.index === 3 || handle.index === 7) {
+    outOfBounds = false;
+
+    // If perpendicular end point is moved
+    longLine.start = {
+      x: data.handles.start.x,
+      y: data.handles.start.y
+    };
+    longLine.end = {
+      x: data.handles.end.x,
+      y: data.handles.end.y
+    };
+
     perpendicularLine.start = {
       x: data.handles.perpendicularStart.x,
       y: data.handles.perpendicularStart.y
@@ -68,22 +151,76 @@ export default function(handle, eventData, data, distanceFromTool) {
       y: proposedPoint.y
     };
 
-    movedPoint = perpendicularRightFixedEndPoint(proposedPoint, data);
-    if (!movedPoint) {
-      eventData.currentPoints.image.x = data.handles.perpendicularEnd.x;
-      eventData.currentPoints.image.y = data.handles.perpendicularEnd.y;
+    intersection = external.cornerstoneMath.lineSegment.intersectLine(
+      longLine,
+      perpendicularLine
+    );
+    if (!intersection) {
+      perpendicularLine.end = {
+        x: data.handles.perpendicularEnd.x,
+        y: data.handles.perpendicularEnd.y
+      };
+
+      intersection = external.cornerstoneMath.lineSegment.intersectLine(
+        longLine,
+        perpendicularLine
+      );
+
+      d1 = external.cornerstoneMath.point.distance(
+        intersection,
+        data.handles.start
+      );
+      d2 = external.cornerstoneMath.point.distance(
+        intersection,
+        data.handles.end
+      );
+
+      if (!intersection || d1 < 3 || d2 < 3) {
+        outOfBounds = true;
+      }
+    }
+
+    movedPoint = false;
+
+    if (!outOfBounds) {
+      movedPoint = perpendicularRightFixedPoint(proposedPoint, data);
+
+      if (!movedPoint) {
+        eventData.currentPoints.image.x = data.handles.perpendicularEnd.x;
+        eventData.currentPoints.image.y = data.handles.perpendicularEnd.y;
+      }
     }
   } else if (handle.index === 4) {
-    movedPoint = perpendicularLeftFixedPoint(proposedPoint, data);
-    if (!movedPoint) {
+    movedPoint = perpendicularLeftFixedPoint2(proposedPoint, data);
+    if (
+      !movedPoint &&
+      eventData.currentPoints.image &&
+      data.handles.leftStart
+    ) {
       eventData.currentPoints.image.x = data.handles.leftStart.x;
       eventData.currentPoints.image.y = data.handles.leftStart.y;
     }
-  } else if (handle.index === 6) {
-    movedPoint = perpendicularRightFixedPoint(proposedPoint, data);
-    if (!movedPoint) {
+  } else if (handle.index === 5 || handle.index === 9) {
+    movedPoint = perpendicularRightFixedPoint2(proposedPoint, data);
+    if (
+      !movedPoint &&
+      eventData.currentPoints.image &&
+      data.handles.rightStart
+    ) {
       eventData.currentPoints.image.x = data.handles.rightStart.x;
       eventData.currentPoints.image.y = data.handles.rightStart.y;
+    }
+  } else if (handle.index === 6) {
+    movedPoint = angleLeftFixedPoint(proposedPoint, data);
+    if (!movedPoint) {
+      eventData.currentPoints.image.x = data.handles.angleStart.x;
+      eventData.currentPoints.image.y = data.handles.angleStart.y;
+    }
+  } else if (handle.index === 8) {
+    movedPoint = angleLeftFixedPoint2(proposedPoint, data);
+    if (!movedPoint) {
+      eventData.currentPoints.image.x = data.handles.leftStart.x;
+      eventData.currentPoints.image.y = data.handles.leftStart.y;
     }
   }
 }

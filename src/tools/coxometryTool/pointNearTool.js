@@ -1,6 +1,6 @@
-import { state } from './../../store/index.js';
-import external from './../../externalModules.js';
-import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
+import { state } from "./../../store/index.js";
+import external from "./../../externalModules.js";
+import pointInsideBoundingBox from "./../../util/pointInsideBoundingBox.js";
 
 const pointNearPerpendicular = (
   element,
@@ -12,7 +12,7 @@ const pointNearPerpendicular = (
   const cornerstoneMath = external.cornerstoneMath;
   const lineSegment = {
     start: cornerstone.pixelToCanvas(element, handles.perpendicularStart),
-    end: cornerstone.pixelToCanvas(element, handles.perpendicularEnd),
+    end: cornerstone.pixelToCanvas(element, handles.perpendicularEnd)
   };
 
   const distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(
@@ -23,7 +23,7 @@ const pointNearPerpendicular = (
   return distanceToPoint < distanceThreshold;
 };
 
-const pointNearLeft = (
+const pointNearPerpendicular2 = (
   element,
   handles,
   coords,
@@ -32,8 +32,8 @@ const pointNearLeft = (
   const cornerstone = external.cornerstone;
   const cornerstoneMath = external.cornerstoneMath;
   const lineSegment = {
-    start: cornerstone.pixelToCanvas(element, handles.leftStart),
-    end: cornerstone.pixelToCanvas(element, handles.leftEnd),
+    start: cornerstone.pixelToCanvas(element, handles.perpendicularStart2),
+    end: cornerstone.pixelToCanvas(element, handles.perpendicularEnd2)
   };
 
   const distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(
@@ -44,17 +44,12 @@ const pointNearLeft = (
   return distanceToPoint < distanceThreshold;
 };
 
-const pointNearRight = (
-  element,
-  handles,
-  coords,
-  distanceThreshold
-) => {
+const pointNearAngle = (element, handles, coords, distanceThreshold) => {
   const cornerstone = external.cornerstone;
   const cornerstoneMath = external.cornerstoneMath;
   const lineSegment = {
-    start: cornerstone.pixelToCanvas(element, handles.rightStart),
-    end: cornerstone.pixelToCanvas(element, handles.rightEnd),
+    start: cornerstone.pixelToCanvas(element, handles.angleStart),
+    end: cornerstone.pixelToCanvas(element, handles.angleEnd)
   };
 
   const distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(
@@ -65,13 +60,29 @@ const pointNearRight = (
   return distanceToPoint < distanceThreshold;
 };
 
-export default function(element, data, coords, interactionType = 'mouse') {
+const pointNearAngle2 = (element, handles, coords, distanceThreshold) => {
+  const cornerstone = external.cornerstone;
+  const cornerstoneMath = external.cornerstoneMath;
+  const lineSegment = {
+    start: cornerstone.pixelToCanvas(element, handles.angleStart2),
+    end: cornerstone.pixelToCanvas(element, handles.angleEnd2)
+  };
+
+  const distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(
+    lineSegment,
+    coords
+  );
+
+  return distanceToPoint < distanceThreshold;
+};
+
+export default function(element, data, coords, interactionType = "mouse") {
   const cornerstone = external.cornerstone;
   const cornerstoneMath = external.cornerstoneMath;
   const { handles } = data;
   const lineSegment = {
     start: cornerstone.pixelToCanvas(element, handles.start),
-    end: cornerstone.pixelToCanvas(element, handles.end),
+    end: cornerstone.pixelToCanvas(element, handles.end)
   };
 
   const distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(
@@ -84,17 +95,21 @@ export default function(element, data, coords, interactionType = 'mouse') {
   }
 
   const distanceThreshold =
-    interactionType === 'mouse' ? state.clickProximity : state.touchProximity;
+    interactionType === "mouse" ? state.clickProximity : state.touchProximity;
 
   if (pointNearPerpendicular(element, handles, coords, distanceThreshold)) {
     return true;
   }
 
-  if (pointNearLeft(element, handles, coords, distanceThreshold)) {
+  if (pointNearPerpendicular2(element, handles, coords, distanceThreshold)) {
     return true;
   }
 
-  if (pointNearRight(element, handles, coords, distanceThreshold)) {
+  if (pointNearAngle(element, handles, coords, distanceThreshold)) {
+    return true;
+  }
+
+  if (pointNearAngle2(element, handles, coords, distanceThreshold)) {
     return true;
   }
 

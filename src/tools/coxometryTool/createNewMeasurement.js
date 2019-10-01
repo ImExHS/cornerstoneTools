@@ -7,7 +7,7 @@ const getHandle = (x, y, index, extraAttributes = {}) =>
       drawnIndependently: false,
       allowedOutsideImage: false,
       highlight: true,
-      active: false,
+      active: false
     },
     extraAttributes
   );
@@ -26,22 +26,24 @@ export default function(mouseEventData) {
       end: getHandle(x, y, 1, { active: true }),
       perpendicularStart: getHandle(x, y, 2, { locked: true }),
       perpendicularEnd: getHandle(x, y, 3),
-      leftStart: getHandle(x, y, 4),
-      leftEnd: getHandle(x, y, 5),
-      rightStart: getHandle(x, y, 6),
-      rightEnd: getHandle(x, y, 7),
-      textBox: getHandle(x - 120, y - 70, null, {
+      perpendicularStart2: getHandle(x, y, 4),
+      perpendicularEnd2: getHandle(x, y, 5),
+      angleStart: getHandle(x, y, 6),
+      angleEnd: getHandle(x, y, 7),
+      angleStart2: getHandle(x, y, 8),
+      angleEnd2: getHandle(x, y, 9),
+      textBox: getHandle(x, y, null, {
         highlight: false,
         hasMoved: true,
         active: false,
         movesIndependently: false,
         drawnIndependently: true,
         allowedOutsideImage: true,
-        hasBoundingBox: true,
-      }),
+        hasBoundingBox: true
+      })
     },
     longestDiameter: 0,
-    shortestDiameter: 0,
+    shortestDiameter: 0
   };
 
   return measurementData;

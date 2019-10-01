@@ -1,9 +1,9 @@
-import external from "../../../externalModules.js";
-import { state } from "../../../store/index.js";
-import EVENTS from "../../../events.js";
+import external from "./../../../externalModules.js";
+import { state } from "./../../../store/index.js";
+import EVENTS from "./../../../events.js";
 import setHandlesPosition from "./setHandlesPosition.js";
-import getActiveTool from "../../../util/getActiveTool";
-import baseAnnotationTool from "../../../base/baseAnnotationTool.js";
+import getActiveTool from "./../../../util/getActiveTool";
+import baseAnnotationTool from "./../../../base/baseAnnotationTool.js";
 
 function pointInsideImage(pos, image) {
   if (pos.x < 0 || pos.x >= image.width || pos.y < 0 || pos.y >= image.height) {
@@ -30,6 +30,7 @@ export default function(
     const eventData = event.detail;
 
     handle.hasMoved = true;
+
     let outsideImage = false;
     let originalOutside = false;
     if (preventHandleOutsideImage) {
@@ -44,7 +45,13 @@ export default function(
         leftStart,
         leftEnd,
         rightStart,
-        rightEnd
+        rightEnd,
+        perpendicularStart2,
+        perpendicularEnd2,
+        angleStart,
+        angleEnd,
+        angleStart2,
+        angleEnd2
       } = data.handles;
       if (handle.index == 0) {
         if (!pointInsideImage(start, eventData.image)) {
@@ -63,11 +70,27 @@ export default function(
           originalOutside = true;
         }
       } else if (handle.index == 4) {
-        if (!pointInsideImage(leftStart, eventData.image)) {
+        if (!pointInsideImage(perpendicularStart2, eventData.image)) {
+          originalOutside = true;
+        }
+      } else if (handle.index == 5) {
+        if (!pointInsideImage(perpendicularEnd2, eventData.image)) {
           originalOutside = true;
         }
       } else if (handle.index == 6) {
-        if (!pointInsideImage(rightStart, eventData.image)) {
+        if (!pointInsideImage(angleStart, eventData.image)) {
+          originalOutside = true;
+        }
+      } else if (handle.index == 7) {
+        if (!pointInsideImage(angleEnd, eventData.image)) {
+          originalOutside = true;
+        }
+      } else if (handle.index == 8) {
+        if (!pointInsideImage(angleStart2, eventData.image)) {
+          originalOutside = true;
+        }
+      } else if (handle.index == 9) {
+        if (!pointInsideImage(angleEnd2, eventData.image)) {
           originalOutside = true;
         }
       }

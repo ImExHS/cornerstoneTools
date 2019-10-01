@@ -4,72 +4,65 @@ export default function(eventData, data) {
     return;
   }
 
-  let startX, startY, endX, endY;
-  let leftStartX, leftStartY, leftEndX, leftEndY;
-  let rightStartX, rightStartY, rightEndX, rightEndY;
+  let startX_p1, startY_p1, endX_p1, endY_p1;
+  let startX_p2, startY_p2, endX_p2, endY_p2;
 
   const { start, end } = data.handles;
 
   if (start.x === end.x && start.y === end.y) {
-    startX = start.x;
-    startY = start.y;
-    endX = end.x;
-    endY = end.y;
-    leftStartX = start.x;
-    leftStartY = start.y;
-    leftEndX = end.x;
-    leftEndY = end.y;
-    rightStartX = start.x;
-    rightStartY = start.y;
-    rightEndX = end.x;
-    rightEndY = end.y;
+    startX_p1 = start.x;
+    startY_p1 = start.y;
+    endX_p1 = end.x;
+    endY_p1 = end.y;
   } else {
     // Mid point of long-axis line
     const mid = {
       x: (start.x + end.x) / 2,
-      y: (start.y + end.y) / 2,
+      y: (start.y + end.y) / 2
     };
-
     // Length of long-axis
     const dx = (start.x - end.x) * (eventData.image.columnPixelSpacing || 1);
     const dy = (start.y - end.y) * (eventData.image.rowPixelSpacing || 1);
     const length = Math.sqrt(dx * dx + dy * dy);
-    const perpendicularLineLength = length / 2;
 
-    const vectorX = (start.x - end.x) / length;
-    const vectorY = (start.y - end.y) / length;
+    const baseline_angle = Math.abs(Math.atan2(dy, dx));
+    let perpendicular_angle, dx_perpendicular, dy_perpendicular;
 
-    startX = end.x + (perpendicularLineLength / 2) * vectorY;
-    startY = end.y - (perpendicularLineLength / 2) * vectorX;
-    endX = end.x - (perpendicularLineLength / 2) * vectorY;
-    endY = end.y + (perpendicularLineLength / 2) * vectorX;
+    if (baseline_angle > Math.PI / 2) {
+      perpendicular_angle = baseline_angle - Math.PI / 2;
+    } else {
+      perpendicular_angle = Math.PI / 2 - baseline_angle;
+    }
 
-    leftStartX = mid.x + (perpendicularLineLength / 2) * vectorY;
-    leftStartY = mid.y - (perpendicularLineLength / 2) * vectorX;
-    leftEndX = mid.x;
-    leftEndY = mid.y;
+    if (dy < 0) {
+      dx_perpendicular = length * Math.cos(perpendicular_angle);
+    } else {
+      dx_perpendicular = -1 * length * Math.cos(perpendicular_angle);
+    }
 
-    rightStartX = mid.x - (perpendicularLineLength / 2) * vectorY;
-    rightStartY = mid.y + (perpendicularLineLength / 2) * vectorX;
-    rightEndX = mid.x;
-    rightEndY = mid.y;
+    if (dx < 0) {
+      dy_perpendicular = -1 * length * Math.sin(perpendicular_angle);
+    } else {
+      dy_perpendicular = length * Math.sin(perpendicular_angle);
+    }
+
+    startX_p1 = start.x - dx_perpendicular / 4 + 10;
+    startY_p1 = start.y - dy_perpendicular / 4 + 10;
+    endX_p1 = start.x + dx_perpendicular / 4 + 10;
+    endY_p1 = start.y + dy_perpendicular / 4 + 10;
+
+    startX_p2 = end.x - dx_perpendicular / 4 - 10;
+    startY_p2 = end.y - dy_perpendicular / 4 + 10;
+    endX_p2 = end.x + dx_perpendicular / 4 - 10;
+    endY_p2 = end.y + dy_perpendicular / 4 + 10;
   }
+  data.handles.perpendicularStart.x = startX_p1;
+  data.handles.perpendicularStart.y = startY_p1;
+  data.handles.perpendicularEnd.x = endX_p1;
+  data.handles.perpendicularEnd.y = endY_p1;
 
-  // main perpendicular line
-  data.handles.perpendicularStart.x = startX;
-  data.handles.perpendicularStart.y = startY;
-  data.handles.perpendicularEnd.x = endX;
-  data.handles.perpendicularEnd.y = endY;
-
-  // left perpendicular
-  data.handles.leftStart.x = leftStartX;
-  data.handles.leftStart.y = leftStartY;
-  data.handles.leftEnd.x = leftEndX;
-  data.handles.leftEnd.y = leftEndY;
-
-  // left perpendicular
-  data.handles.rightStart.x = rightStartX;
-  data.handles.rightStart.y = rightStartY;
-  data.handles.rightEnd.x = rightEndX;
-  data.handles.rightEnd.y = rightEndY;
+  data.handles.perpendicularStart2.x = startX_p2;
+  data.handles.perpendicularStart2.y = startY_p2;
+  data.handles.perpendicularEnd2.x = endX_p2;
+  data.handles.perpendicularEnd2.y = endY_p2;
 }

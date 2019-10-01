@@ -1,4 +1,4 @@
-import external from "../../../externalModules.js";
+import external from "./../../../externalModules.js";
 
 // Move long-axis end point
 export default function(proposedPoint, data) {
@@ -8,10 +8,12 @@ export default function(proposedPoint, data) {
     end,
     perpendicularStart,
     perpendicularEnd,
-    leftStart,
-    leftEnd,
-    rightStart,
-    rightEnd
+    perpendicularStart2,
+    perpendicularEnd2,
+    angleStart,
+    angleEnd,
+    angleStart2,
+    angleEnd2
   } = data.handles;
 
   const longLine = {
@@ -25,62 +27,117 @@ export default function(proposedPoint, data) {
     }
   };
 
-  const newLineLength = distance(start, proposedPoint);
-  const distanceFromPerpendicularP1 = distance(perpendicularStart, end);
-  const distanceFromPerpendicularP2 = distance(perpendicularEnd, end);
+  const perpendicularLine = {
+    start: {
+      x: perpendicularStart.x,
+      y: perpendicularStart.y
+    },
+    end: {
+      x: perpendicularEnd.x,
+      y: perpendicularEnd.y
+    }
+  };
 
-  // don't allow lines with length < 3
-  if (newLineLength <= 3) {
+  const perpendicularLine2 = {
+    start: {
+      x: perpendicularStart2.x,
+      y: perpendicularStart2.y
+    },
+    end: {
+      x: perpendicularEnd2.x,
+      y: perpendicularEnd2.y
+    }
+  };
+
+  const angleLine = {
+    start: {
+      x: angleStart.x,
+      y: angleStart.y
+    },
+    end: {
+      x: angleEnd.x,
+      y: angleEnd.y
+    }
+  };
+
+  const angleLine2 = {
+    start: {
+      x: angleStart2.x,
+      y: angleStart2.y
+    },
+    end: {
+      x: angleEnd2.x,
+      y: angleEnd2.y
+    }
+  };
+
+  const intersection2 = external.cornerstoneMath.lineSegment.intersectLine(
+    longLine,
+    perpendicularLine2
+  );
+
+  const offset_baseline = 3;
+  const newLineLength = distance(start, proposedPoint);
+  const distanceToLineP4 = distance(start, intersection2);
+
+  if (newLineLength - offset_baseline <= distanceToLineP4) {
     return false;
   }
+
+  // Perpendicular Line 1
+
+  const intersection = external.cornerstoneMath.lineSegment.intersectLine(
+    longLine,
+    perpendicularLine
+  );
+
+  const distanceFromPerpendicularP1 = distance(
+    perpendicularStart,
+    intersection
+  );
+  const distanceFromPerpendicularP2 = distance(perpendicularEnd, intersection);
+
+  const distanceToLineP2 = distance(start, intersection);
 
   const dx = (start.x - proposedPoint.x) / newLineLength;
   const dy = (start.y - proposedPoint.y) / newLineLength;
 
-  // reposition of main perpendicular line on new proposed point
-  perpendicularStart.x = proposedPoint.x + distanceFromPerpendicularP1 * dy;
-  perpendicularStart.y = proposedPoint.y - distanceFromPerpendicularP1 * dx;
-  perpendicularEnd.x = proposedPoint.x - distanceFromPerpendicularP2 * dy;
-  perpendicularEnd.y = proposedPoint.y + distanceFromPerpendicularP2 * dx;
+  const k = distanceToLineP2 / newLineLength;
 
-  const distanceFromLeftStart = external.cornerstoneMath.lineSegment.distanceToPoint(
-    data.handles,
-    leftStart
-  );
-
-  // find position to start left line based on proposed point
-  const lineLength = distance(start, end);
-  const lengthLeft = distance(start, leftEnd);
-  let k = lengthLeft / lineLength;
-  const newIntersectionL = {
+  const newIntersection = {
     x: start.x + (proposedPoint.x - start.x) * k,
     y: start.y + (proposedPoint.y - start.y) * k
   };
 
-  // reposition of left perpendicular line
-  leftStart.x = newIntersectionL.x + distanceFromLeftStart * dy;
-  leftStart.y = newIntersectionL.y - distanceFromLeftStart * dx;
-  leftEnd.x = newIntersectionL.x;
-  leftEnd.y = newIntersectionL.y;
+  perpendicularStart.x = newIntersection.x + distanceFromPerpendicularP1 * dy;
+  perpendicularStart.y = newIntersection.y - distanceFromPerpendicularP1 * dx;
 
-  const distanceFromRightStart = external.cornerstoneMath.lineSegment.distanceToPoint(
-    data.handles,
-    rightStart
+  perpendicularEnd.x = newIntersection.x - distanceFromPerpendicularP2 * dy;
+  perpendicularEnd.y = newIntersection.y + distanceFromPerpendicularP2 * dx;
+
+  // Perpendicular Line 2
+
+  const distanceFromPerpendicularP3 = distance(
+    perpendicularStart2,
+    intersection2
+  );
+  const distanceFromPerpendicularP4 = distance(
+    perpendicularEnd2,
+    intersection2
   );
 
-  // find position to start right line based on proposed point
-  const lengthRight = distance(start, rightEnd);
-  k = lengthRight / lineLength;
-  const newIntersectionR = {
-    x: start.x + (proposedPoint.x - start.x) * k,
-    y: start.y + (proposedPoint.y - start.y) * k
+  const k2 = distanceToLineP4 / newLineLength;
+
+  const newIntersection2 = {
+    x: start.x + (proposedPoint.x - start.x) * k2,
+    y: start.y + (proposedPoint.y - start.y) * k2
   };
 
-  // reposition of right perpendicular line
-  rightStart.x = newIntersectionR.x - distanceFromRightStart * dy;
-  rightStart.y = newIntersectionR.y + distanceFromRightStart * dx;
-  rightEnd.x = newIntersectionR.x;
-  rightEnd.y = newIntersectionR.y;
+  perpendicularStart2.x = newIntersection2.x + distanceFromPerpendicularP3 * dy;
+  perpendicularStart2.y = newIntersection2.y - distanceFromPerpendicularP3 * dx;
+
+  perpendicularEnd2.x = newIntersection2.x - distanceFromPerpendicularP4 * dy;
+  perpendicularEnd2.y = newIntersection2.y + distanceFromPerpendicularP4 * dx;
 
   return true;
 }
