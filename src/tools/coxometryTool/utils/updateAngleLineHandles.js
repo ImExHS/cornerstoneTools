@@ -2,9 +2,9 @@ import external from "../../../externalModules";
 
 // Update the  angle line handles
 export default function(eventData, data) {
-  // if (!data.handles.angleStart.locked) {
-  //   return;
-  // }
+  if (!data.handles.angleStart.locked) {
+    return;
+  }
 
   let startX_p1, startY_p1, endX_p1, endY_p1;
   let startX_p2, startY_p2, endX_p2, endY_p2;
@@ -109,13 +109,22 @@ export default function(eventData, data) {
       endY_p2 = data.handles.perpendicularEnd2.y;
     }
   }
-  data.handles.angleStart.x = startX_p1;
-  data.handles.angleStart.y = startY_p1;
+
   data.handles.angleEnd.x = endX_p1;
   data.handles.angleEnd.y = endY_p1;
+  data.handles.angleEnd2.x = endX_p2;
+  data.handles.angleEnd2.y = endY_p2;
+
+  if (
+    !data.handles.perpendicularStart.locked ||
+    !data.handles.perpendicularStart2.locked
+  ) {
+    return;
+  }
+
+  data.handles.angleStart.x = startX_p1;
+  data.handles.angleStart.y = startY_p1;
 
   data.handles.angleStart2.x = startX_p2;
   data.handles.angleStart2.y = startY_p2;
-  data.handles.angleEnd2.x = endX_p2;
-  data.handles.angleEnd2.y = endY_p2;
 }

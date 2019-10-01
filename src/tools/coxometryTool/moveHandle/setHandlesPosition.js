@@ -108,16 +108,7 @@ export default function(handle, eventData, data, distanceFromTool) {
       if (!intersection || d1 < 3 || d2 < 3) {
         outOfBounds = true;
       }
-      // if (perpendicularLine.start.x >= angleLine.start.x) {
-      //   console.log('here');
-      //   outOfBounds = true;
-      // }
     }
-
-    // if (perpendicularLine.start.x > angleLine.start.x) {
-    //   console.log('here');
-    //   outOfBounds = true;
-    // }
 
     movedPoint = false;
 

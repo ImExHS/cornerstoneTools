@@ -61,8 +61,8 @@ export default function(movedPoint, data) {
   angleEnd.y = movedPoint.y + distanceFromMoved * dx;
 
   // mark that handle has been modified (must be another variable?)
-  perpendicularEnd.locked = false;
-  perpendicularStart.locked = false;
+  angleStart.locked = false;
+  angleEnd.locked = false;
 
   const longLine = {
     start: {

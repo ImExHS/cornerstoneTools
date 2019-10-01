@@ -31,13 +31,13 @@ export default function(movedPoint, data) {
   const total = distanceFromFixed + distanceFromMoved;
 
   if (distanceBetweenPoints <= distanceFromFixed) {
-    console.log("hola");
     return false;
   }
 
   // check if linep1 is before line p2
   const intersectionP1 = getIntersectionPointProposed(data, movedPoint)[0];
   const intersectionP2 = getIntersectionPointProposed(data, movedPoint)[1];
+  const intersectionA1 = getIntersectionPointProposed(data, movedPoint)[2];
 
   const distance_end_p1_proposed = distance(data.handles.end, intersectionP1);
   const offset_p1_p2 = 3;
@@ -47,6 +47,7 @@ export default function(movedPoint, data) {
     return false;
   }
 
+  const distance_end_a1_proposed = distance(data.handles.end, intersectionA1);
   const length = distance(start, end);
 
   if (length === 0) {
@@ -54,7 +55,7 @@ export default function(movedPoint, data) {
   }
 
   // check if linep1 is before angle
-  if (perpendicularStart.x + offset_p1_p2 >= angleStart.x) {
+  if (distance_end_p1_proposed <= distance_end_a1_proposed + offset_p1_p2) {
     return false;
   }
 
@@ -106,13 +107,11 @@ export default function(movedPoint, data) {
 
   if (!intersection) {
     if (distance(movedPoint, start) > distance(movedPoint, end)) {
-      console.log("1");
       perpendicularStart.x = adjustedLineP2.x + distanceFromMoved * dy;
       perpendicularStart.y = adjustedLineP2.y - distanceFromMoved * dx;
       perpendicularEnd.x = perpendicularStart.x - total * dy;
       perpendicularEnd.y = perpendicularStart.y + total * dx;
     } else {
-      console.log("2");
       perpendicularStart.x = adjustedLineP1.x + distanceFromMoved * dy;
       perpendicularStart.y = adjustedLineP1.y - distanceFromMoved * dx;
       perpendicularEnd.x = perpendicularStart.x - total * dy;
@@ -157,6 +156,17 @@ const getIntersectionPointProposed = (data, movedPoint) => {
     }
   };
 
+  const angleLine = {
+    start: {
+      x: data.handles.angleStart.x,
+      y: data.handles.angleStart.y
+    },
+    end: {
+      x: data.handles.angleEnd.x,
+      y: data.handles.angleEnd.y
+    }
+  };
+
   const intersectionP1 = external.cornerstoneMath.lineSegment.intersectLine(
     longLine,
     perpendicularLine1
@@ -166,5 +176,11 @@ const getIntersectionPointProposed = (data, movedPoint) => {
     longLine,
     perpendicularLine2
   );
-  return [intersectionP1, intersectionP2];
+
+  const intersectionA1 = external.cornerstoneMath.lineSegment.intersectLine(
+    longLine,
+    angleLine
+  );
+
+  return [intersectionP1, intersectionP2, intersectionA1];
 };
