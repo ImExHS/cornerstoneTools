@@ -17,6 +17,8 @@ import moveNewHandle from '../manipulators/moveNewHandle.js';
 import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
+import drawTextBox from '../util/drawTextBox.js';
+
 
 // Drawing
 import {
@@ -87,7 +89,15 @@ export default class extends baseAnnotationTool {
           active: false,
           drawnIndependently: true,
         },
-        textBox: {
+        textBox1: {
+          active: false,
+          hasMoved: false,
+          movesIndependently: false,
+          drawnIndependently: true,
+          allowedOutsideImage: true,
+          hasBoundingBox: true,
+        },
+        textBox2: {
           active: false,
           hasMoved: false,
           movesIndependently: false,
@@ -244,8 +254,9 @@ export default class extends baseAnnotationTool {
         active: true
       };
       toMoveHandle = measurementData.handles.end2;
-      this.associateElement( element, measurementData.handles.start2 );
-      this.associateElement( element, measurementData.handles.end2 );
+      this.associateElementToHandle( element, measurementData.handles.start2 );
+      this.associateElementToHandle( element, measurementData.handles.end2 );
+      this.associateElementToHandle( element, measurementData.handles.textBox2 );
 
       // add to state of current element
       if ( measurementData.segElem !== element ){
@@ -257,17 +268,9 @@ export default class extends baseAnnotationTool {
       measurementData.segImage = evt.detail.image;
       addToolState(element, this.name, measurementData);
       toMoveHandle = measurementData.handles.end;
-      this.associateElement( element, measurementData.handles.start );
-      this.associateElement( element, measurementData.handles.end );
-
-      measurementData.handles.textBox.reqElement = element;
-      measurementData.handles.textBox.pointNearHandle = function(element, handle, coords) {
-        if( element === handle.reqElement && handle.hasBoundingBox ){
-          return pointInsideBoundingBox(handle, coords);
-        }
-        return false; 
-      }
-
+      this.associateElementToHandle( element, measurementData.handles.start );
+      this.associateElementToHandle( element, measurementData.handles.end );
+      this.associateElementToHandle( element, measurementData.handles.textBox1 );
     }
 
     // MoveHandle, moveNewHandle, moveHandleTouch, and moveNewHandleTouch
@@ -293,15 +296,7 @@ export default class extends baseAnnotationTool {
         // TODO: check this values
         measurementData.handles.end.active = false;
         measurementData.handles.end2.active = false;
-
-        // TODO: `anyHandlesOutsideImage` deletion should be a config setting
-        // TODO: Maybe globally? Mayber per tool?
-        // If any handle is outside image, delete and abort
-        // if (anyHandlesOutsideImage(eventData, measurementData.handles)) {
-        //   // Delete the measurement
-        //   removeToolState(element, this.name, measurementData);
-        // }
-        
+       
         const eventType = EVENTS.MEASUREMENT_FINISHED;
 
         toMoveHandle.isMoving = false;
@@ -320,16 +315,22 @@ export default class extends baseAnnotationTool {
     );
   }
 
-  associateElement( segElement, segPoint ) {
+  associateElementToHandle( segElement, segPoint ) {
 
     // associate handlers to element
     segPoint.reqElement = segElement;
+
+    // function to get if point is near to handle
     segPoint.pointNearHandle = function(element, handle, coords) {      
-      if(  element === handle.reqElement ){
-        const handleCanvas = external.cornerstone.pixelToCanvas(element, handle);
-        const distance = external.cornerstoneMath.point.distance(handleCanvas, coords);
-        if (distance <= 25) {
-          return true;
+      if( element === handle.reqElement ){
+        if( handle.hasBoundingBox ){
+          return pointInsideBoundingBox(handle, coords);
+        } else {
+          const handleCanvas = external.cornerstone.pixelToCanvas(element, handle);
+          const distance = external.cornerstoneMath.point.distance(handleCanvas, coords);
+          if (distance <= 25) {
+            return true;
+          }
         }
       }
       return false;
@@ -385,9 +386,6 @@ export default class extends baseAnnotationTool {
       const dx2 = ((data.handles.start2.x) - (data.handles.end2.x)) * columnPixelSpacing2;
       const dy2 = ((data.handles.start2.y) - (data.handles.end2.y)) * rowPixelSpacing2;
 
-      // console.log('xxxxxxxxxxxxxxxxxxxxx (' +dx1+','+dy1+')');
-      // console.log('xxxxxxxxxxxxxxxxxxxxx (' +dx2+','+dy2+')');
-
       let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
 
       angle *= (180 / Math.PI);
@@ -407,7 +405,7 @@ export default class extends baseAnnotationTool {
         !rowPixelSpacing || !columnPixelSpacing ? ' (isotropic)' : '';
       const str = '00B0'; // Degrees symbol
       return (
-        rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
+        'ang AB: '+ rAngle.toString() + String.fromCharCode(parseInt(str, 16))
       );
     }
   }
@@ -433,6 +431,7 @@ export default class extends baseAnnotationTool {
     const color = toolColors.getColorIfActive(data);
 
     drawLine(context, element, handles.start, handles.end, {color});
+    this.drawLineLabel( 'A', element, context, handles, color );
 
     const handleOptions = {
       drawHandlesIfActive: config && config.drawHandlesOnHover,
@@ -446,22 +445,22 @@ export default class extends baseAnnotationTool {
     const text = data.value;
 
     // TODO: take into account pixel size!
-    if (!data.handles.textBox.hasMoved) {
+    if (!data.handles.textBox1.hasMoved) {
       let textCoords;
       textCoords = {
         x: (handles.start.x + handles.end.x) / 2,
-        y: (handles.start.y + handles.end.y) / 2 - 10
+        y: (handles.start.y + handles.end.y) / 2 - 20
       };
 
       context.font = font;
-      data.handles.textBox.x = textCoords.x;
-      data.handles.textBox.y = textCoords.y;
+      data.handles.textBox1.x = textCoords.x;
+      data.handles.textBox1.y = textCoords.y;
     }
 
     drawLinkedTextBox(
       context,
       element,
-      data.handles.textBox,
+      data.handles.textBox1,
       text,
       handles,
       textBoxAnchorPoints,
@@ -476,14 +475,29 @@ export default class extends baseAnnotationTool {
     }
   }
 
+  drawLineLabel( label, element, context, handles, color ) {
+
+    let options = {
+      centering: {
+        x: true,
+        y: true
+      }
+    };    
+    const label_x = (handles.start.x + handles.end.x) / 2.0;
+    const label_y = (handles.start.y + handles.end.y) / 2.0 + 10;
+    const posTextA = { x: label_x, y: label_y };
+    const lineCoordsA = external.cornerstone.pixelToCanvas(element, posTextA);
+    drawTextBox(context, label, lineCoordsA.x, lineCoordsA.y, color, options );      
+  }
+
   drawSegment2(element, data, eventData, context) {
 
     if (data.segElem2 !== element) {
       return;
     }
 
-    // const lineWidth = toolStyle.getToolWidth();
-    // const font = textStyle.getFont();
+    const lineWidth = toolStyle.getToolWidth();
+    const font = textStyle.getFont();
     const config = this.configuration;
 
     setShadow(context, config);
@@ -497,15 +511,52 @@ export default class extends baseAnnotationTool {
     const color = toolColors.getColorIfActive(data);
 
     if (data.complete) {
+
       drawLine(context, element, handles.start, handles.end, {color});
+      this.drawLineLabel( 'B', element, context, handles, color );
+
+      const handleOptions = {
+        drawHandlesIfActive: config && config.drawHandlesOnHover,
+        hideHandlesIfMoved: config && config.hideHandlesIfMoved
+      };
+  
+      drawHandles(context, eventData, handles, color, handleOptions);
+  
+      // Draw the text
+      context.fillStyle = color;
+      const text = data.value;
+  
+      // TODO: take into account pixel size!
+      if (!data.handles.textBox2.hasMoved) {
+        let textCoords;
+        textCoords = {
+          x: (handles.start.x + handles.end.x) / 2,
+          y: (handles.start.y + handles.end.y) / 2 - 20
+        };
+  
+        context.font = font;
+        data.handles.textBox2.x = textCoords.x;
+        data.handles.textBox2.y = textCoords.y;
+      }
+  
+      drawLinkedTextBox(
+        context,
+        element,
+        data.handles.textBox2,
+        text,
+        handles,
+        textBoxAnchorPoints,
+        color,
+        lineWidth,
+        0,
+        true
+      );
+  
     }
 
-    const handleOptions = {
-      drawHandlesIfActive: config && config.drawHandlesOnHover,
-      hideHandlesIfMoved: config && config.hideHandlesIfMoved
-    };
-
-    drawHandles(context, eventData, handles, color, handleOptions);
+    function textBoxAnchorPoints(handles) {
+      return [handles.start, handles.end];
+    }
   }
 
   activeCallback(element) {
