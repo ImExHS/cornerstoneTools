@@ -321,10 +321,10 @@ export default class extends baseAnnotationTool {
       const columnPixelSpacing = image.columnPixelSpacing || 1;
       const rowPixelSpacing = image.rowPixelSpacing || 1;
 
-      const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * columnPixelSpacing;
-      const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * rowPixelSpacing;
-      const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * columnPixelSpacing;
-      const dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * rowPixelSpacing;
+      const dx1 = ((data.handles.start.x) - (data.handles.end.x)) * columnPixelSpacing;
+      const dy1 = ((data.handles.start.y) - (data.handles.end.y)) * rowPixelSpacing;
+      const dx2 = ((data.handles.start2.x) - (data.handles.end2.x)) * columnPixelSpacing;
+      const dy2 = ((data.handles.start2.y) - (data.handles.end2.y)) * rowPixelSpacing;
 
       let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
 
