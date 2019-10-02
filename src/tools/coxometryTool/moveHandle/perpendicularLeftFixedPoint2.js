@@ -3,7 +3,8 @@ import external from "./../../../externalModules.js";
 // Move perpendicular line start point
 export default function(movedPoint, data) {
   const { distance } = external.cornerstoneMath.point;
-  const { start, end, perpendicularStart2, perpendicularEnd2 } = data.handles;
+  const { start, end, perpendicularStart,
+    perpendicularEnd, perpendicularStart2, perpendicularEnd2 } = data.handles;
 
   const fudgeFactor = 1;
   const fixedPoint = perpendicularEnd2;
@@ -66,6 +67,8 @@ export default function(movedPoint, data) {
   perpendicularStart2.y = movedPoint.y;
   perpendicularEnd2.x = movedPoint.x - total * dy;
   perpendicularEnd2.y = movedPoint.y + total * dx;
+  perpendicularEnd.locked = false;
+  perpendicularStart.locked = false;
   perpendicularEnd2.locked = false;
   perpendicularStart2.locked = false;
 
