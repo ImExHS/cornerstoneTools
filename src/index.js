@@ -38,10 +38,9 @@ export { default as crosshairsTool } from "./tools/crosshairsTool.js";
 export { default as triangulationTool } from "./tools/triangulationTool.js";
 // export { default as brushTool } from './tools/brushTool.js';
 // export { default as brushEraserTool } from './tools/brushEraserTool.js';
-export { default as insallSalvatiTool } from "./tools/insallSalvatiTool.js";
-export {
-  default as cardiothoracicIndexTool
-} from "./tools/cardiothoracicIndexTool.js";
+export { default as insallSalvatiTool } from './tools/insallSalvatiTool.js';
+export { default as cardiothoracicIndexTool } from './tools/cardiothoracicIndexTool.js';
+export { default as cobbAngleMVTool } from './tools/cobbAngleMVTool.js';
 export { default as coxometryTool } from "./tools/coxometryTool.js";
 
 // END V3 EXPORTS
