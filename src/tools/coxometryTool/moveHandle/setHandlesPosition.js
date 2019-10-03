@@ -14,10 +14,8 @@ export default function(handle, eventData, data, distanceFromTool) {
   let outOfBounds;
   let result;
   let intersection;
-  let intersectionAn;
   let d1;
   let d2;
-  let d3;
 
   const longLine = {};
   const perpendicularLine = {};
@@ -81,10 +79,7 @@ export default function(handle, eventData, data, distanceFromTool) {
       longLine,
       perpendicularLine
     );
-    intersectionAn = external.cornerstoneMath.lineSegment.intersectLine(
-      perpendicularLine,
-      angleLine
-    );
+
     if (!intersection) {
       perpendicularLine.end = {
         x: data.handles.perpendicularStart.x,
@@ -207,11 +202,13 @@ export default function(handle, eventData, data, distanceFromTool) {
       eventData.currentPoints.image.x = data.handles.angleStart.x;
       eventData.currentPoints.image.y = data.handles.angleStart.y;
     }
+    data.handles.angleStart.locked = true;
   } else if (handle.index === 8) {
     movedPoint = angleLeftFixedPoint2(proposedPoint, data);
     if (!movedPoint) {
-      eventData.currentPoints.image.x = data.handles.leftStart.x;
-      eventData.currentPoints.image.y = data.handles.leftStart.y;
+      eventData.currentPoints.image.x = data.handles.angleStart2.x;
+      eventData.currentPoints.image.y = data.handles.angleStart2.y;
     }
+    data.handles.angleStart.locked = true;
   }
 }

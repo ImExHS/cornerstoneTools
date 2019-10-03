@@ -269,22 +269,22 @@ export default function(evt) {
           y: intersectionP1.y + (intersectionP2.y - intersectionP1.y) / 2
         };
         textBoxAnchorPoints = handles => [textboxhandle];
+
+        const textLines = getTextBoxText(data, rowPixelSpacing, colPixelSpacing);
+
+        drawLinkedTextBox(
+          context,
+          element,
+          textBox,
+          textLines,
+          data.handles,
+          textBoxAnchorPoints,
+          color,
+          lineWidth,
+          xOffset,
+          false
+        );
       }
-
-      const textLines = getTextBoxText(data, rowPixelSpacing, colPixelSpacing);
-
-      drawLinkedTextBox(
-        context,
-        element,
-        textBox,
-        textLines,
-        data.handles,
-        textBoxAnchorPoints,
-        color,
-        lineWidth,
-        xOffset,
-        false
-      );
     });
   }
 }
