@@ -10,7 +10,7 @@ import {
   setShadow,
   drawLine
 } from "./../../util/drawing.js";
-import drawLinkedTextBox from "./../../util/drawLinkedTextBox.js";
+import drawLink from './../../util/drawLink.js';
 import drawTextBox from "./../../util/drawTextBox.js";
 import getPixelSpacing from "./../../util/getPixelSpacing";
 import roundToDecimal from "./../../util/roundToDecimal.js";
@@ -256,21 +256,22 @@ export default function(evt) {
       // Draw the textbox
       const intersectionP1 = getIntersectionPoints(data)[0];
       const intersectionP2 = getIntersectionPoints(data)[1];
-      let xOffset = 0;
-      if (intersectionP1 && intersectionP2) {
-        xOffset = intersectionP1.x + (intersectionP2.x - intersectionP1.x) / 2;
-      }
+      const xOffset = 180;
+      const yOffset = 160;
       let textBoxAnchorPoints = handles => [handles.start, handles.end];
       if (intersectionP1 && intersectionP2) {
-        const textboxhandle = {
-          x: intersectionP1.x + (intersectionP2.x - intersectionP1.x) / 2,
-          y: intersectionP1.y + (intersectionP2.y - intersectionP1.y) / 2
-        };
-        textBoxAnchorPoints = handles => [textboxhandle];
+
+        if (!isNaN(intersectionP1.x) || !isNaN(intersectionP2.x)) {
+          const textboxhandle = {
+            x: intersectionP1.x + (intersectionP2.x - intersectionP1.x) / 2,
+            y: intersectionP1.y + (intersectionP2.y - intersectionP1.y) / 2
+          };
+          textBoxAnchorPoints = handles => [textboxhandle];
+        }
 
         const textLines = getTextBoxText(data, rowPixelSpacing, colPixelSpacing);
 
-        drawLinkedTextBox(
+        drawCoxometryTextBox(
           context,
           element,
           textBox,
@@ -280,7 +281,8 @@ export default function(evt) {
           color,
           lineWidth,
           xOffset,
-          false
+          yOffset,
+          true
         );
       }
     });
@@ -506,3 +508,33 @@ const getIntersectionPoints = data => {
   );
   return [intersectionP1, intersectionP2, intersectionA1, intersectionA2];
 };
+
+const drawCoxometryTextBox = (context, element, textBox, text, handles, textBoxAnchorPoints,
+  color, lineWidth, xOffset, yOffset, yCenter) => {
+ 
+ const cornerstone = external.cornerstone;
+ // Convert the textbox Image coordinates into Canvas coordinates
+ const textCoords = cornerstone.pixelToCanvas(element, textBox);
+
+ if (xOffset) {
+   textCoords.x += xOffset;
+   textCoords.y += yOffset;
+ }
+
+ const options = {
+   centering: {
+     x: false,
+     y: false
+   }
+ };
+
+ // Draw the text box
+ textBox.boundingBox = drawTextBox(context, text, textCoords.x, textCoords.y, color, options);
+ if (textBox.hasMoved) {
+   // Identify the possible anchor points for the tool -> text line
+   const linkAnchorPoints = textBoxAnchorPoints(handles).map((h) => cornerstone.pixelToCanvas(element, h));
+
+   // Draw dashed link line between tool and text
+   drawLink(linkAnchorPoints, textCoords, textBox.boundingBox, context, color, lineWidth);
+ }
+}
