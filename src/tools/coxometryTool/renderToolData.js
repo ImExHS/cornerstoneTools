@@ -109,14 +109,12 @@ export default function(evt) {
 
       // Draw the handles
       const handleOptions = {
-        color,
-        handleRadius,
         drawHandlesIfActive: drawHandlesOnHover,
         hideHandlesIfMoved: hideHandlesIfMoved
       };
 
       // Draw the handles
-      drawHandles(context, eventData, data.handles, handleOptions);
+      drawHandles(context, eventData, data.handles, color, handleOptions);
 
       // Calculate the data measurements
       if (data.invalidated === true) {
