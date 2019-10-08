@@ -6,8 +6,7 @@ import baseAnnotationTool from '../base/baseAnnotationTool.js';
 import textStyle from '../stateManagement/textStyle.js';
 import {
   addToolState,
-  getToolState,
-  removeToolState
+  getToolState
 } from '../stateManagement/toolState.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
@@ -18,7 +17,7 @@ import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import drawTextBox from '../util/drawTextBox.js';
-
+import getElementToolStateManager from '../stateManagement/toolState.js';
 
 // Drawing
 import {
@@ -562,20 +561,24 @@ export default class extends baseAnnotationTool {
   activeCallback(element) {
     this.onMeasureModified = this.onMeasureModified.bind(this);
     element.addEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
+    element.addEventListener(EVENTS.MEASUREMENT_REMOVED, this.onMeasureRemoved);
   }
 
   passiveCallback(element) {
     this.onMeasureModified = this.onMeasureModified.bind(this);
     element.addEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
+    element.addEventListener(EVENTS.MEASUREMENT_REMOVED, this.onMeasureRemoved);
   }
 
   enabledCallback(element, { synchronizationContext } = {}) {
     this.synchronizationContext = synchronizationContext;
     element.removeEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
+    element.removeEventListener(EVENTS.MEASUREMENT_REMOVED, this.onMeasureRemoved);
   }
 
   disabledCallback(element) {
     element.removeEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
+    element.removeEventListener(EVENTS.MEASUREMENT_REMOVED, this.onMeasureRemoved);
   }
 
   toolSelectedCallback (evt, data, toolState) {
@@ -583,5 +586,68 @@ export default class extends baseAnnotationTool {
     evt.stopPropagation();
   }
 
+  onMeasureRemoved(ev) {
+    const elem = ev.detail.element;
+    const segElem1 = ev.detail.measurementData.segElem;
+    const segElem2 = ev.detail.measurementData.segElem2;
+
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxx remove - toolType', ev.detail.toolType);
+    if ( !ev.detail.toolType || ev.detail.toolType != 'cobbAngleMV' ) {
+      return;
+    }
+
+    if ( !segElem1 || !segElem2 ) {
+      // erasing another tool
+      return;
+    }
+
+    const toolType = ev.detail.toolType;
+    const data = ev.detail.measurementData;
+    console.log('xxxxxxxxxxxxxx data', data);
+    
+    if ( elem === segElem1 ) {
+
+      // ensure data is removed from other element
+      const toolData = getToolState(segElem2, 'cobbAngleMV');
+      console.log('xxxxxxxxxxxxxxxxxxxxxxxxxx remove - toolData seg2', toolData);
+
+      // Find this tool data
+      let indexOfData = -1;
+      for (let i = 0; i < toolData.data.length; i++) {
+        if (toolData.data[i] === data) {
+          indexOfData = i;
+        }
+      }
+
+      if (indexOfData !== -1) {
+        console.log('xxxxxxxxxxxxxx removing semgent 2');
+        toolData.data.splice(indexOfData, 1);
+      }
+
+      console.log('xxxxxxxxxxxxxx updating semgent 2', segElem2);
+      external.cornerstone.updateImage(segElem2);
+    } else {
+
+      // ensure data is removed from other element
+      const toolData = getToolState(segElem1, 'cobbAngleMV');
+      console.log('xxxxxxxxxxxxxxxxxxxxxxxxxx remove - toolData seg1', toolData);
+
+      // Find this tool data
+      let indexOfData = -1;
+      for (let i = 0; i < toolData.data.length; i++) {
+        if (toolData.data[i] === data) {
+          indexOfData = i;
+        }
+      }
+
+      if (indexOfData !== -1) {
+        console.log('xxxxxxxxxxxxxx removing semgent 1');
+        toolData.data.splice(indexOfData, 1);
+      }
+
+      console.log('xxxxxxxxxxxxxx updating semgent 1', segElem1);
+      external.cornerstone.updateImage(segElem1);
+    }
+  }
 }
 
