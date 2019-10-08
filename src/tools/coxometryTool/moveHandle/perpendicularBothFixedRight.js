@@ -115,6 +115,24 @@ export default function(proposedPoint, data) {
   perpendicularEnd.x = newIntersection.x - distanceFromPerpendicularP2 * dy;
   perpendicularEnd.y = newIntersection.y + distanceFromPerpendicularP2 * dx;
 
+  // Angle line 1
+  const intersectionAn1 = external.cornerstoneMath.lineSegment.intersectLine(
+    longLine,
+    angleLine
+  );
+
+  const distanceToLineAn1 = distance(start, intersectionAn1);
+
+  const kAn = distanceToLineAn1 / newLineLength;
+
+  const newIntersectionAn = {
+    x: start.x + (proposedPoint.x - start.x) * kAn,
+    y: start.y + (proposedPoint.y - start.y) * kAn,
+  };
+
+  angleStart.x = newIntersectionAn.x + 1;
+  angleStart.y = newIntersectionAn.y + 1;
+
   // Perpendicular Line 2
 
   const distanceFromPerpendicularP3 = distance(
@@ -138,6 +156,24 @@ export default function(proposedPoint, data) {
 
   perpendicularEnd2.x = newIntersection2.x - distanceFromPerpendicularP4 * dy;
   perpendicularEnd2.y = newIntersection2.y + distanceFromPerpendicularP4 * dx;
+
+  // Angle line 2
+  const intersectionAn2 = external.cornerstoneMath.lineSegment.intersectLine(
+    longLine,
+    angleLine2
+  );
+
+  const distanceToLineAn4 = distance(start, intersectionAn2);
+
+  const kAn2 = distanceToLineAn4 / newLineLength;
+
+  const newIntersectionAn2 = {
+    x: start.x + (proposedPoint.x - start.x) * kAn2,
+    y: start.y + (proposedPoint.y - start.y) * kAn2,
+  };
+
+  angleStart2.x = newIntersectionAn2.x - 1;
+  angleStart2.y = newIntersectionAn2.y + 1;
 
   return true;
 }

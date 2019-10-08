@@ -108,29 +108,25 @@ export default function(proposedPoint, data) {
   perpendicularEnd.x = newIntersection.x + distanceFromPerpendicularP2 * dy;
   perpendicularEnd.y = newIntersection.y - distanceFromPerpendicularP2 * dx;
 
+  perpendicularStart.locked = false;
+
   // Angle line 1
-  // const intersectionAn1 = external.cornerstoneMath.lineSegment.intersectLine(
-  //   longLine,
-  //   angleLine
-  // );
+  const intersectionAn1 = external.cornerstoneMath.lineSegment.intersectLine(
+    longLine,
+    angleLine
+  );
 
-  // const distanceFromAngle1 = distance(angleStart, intersectionAn1);
-  // const distanceFromAngle2 = distance(angleEnd, intersectionAn1);
+  const distanceToLineAn1 = distance(end, intersectionAn1);
 
-  // const distanceToLineAn2 = distance(end, intersectionAn1);
+  const kAn = distanceToLineAn1 / newLineLength;
 
-  // const kAn = distanceToLineAn2 / newLineLength;
+  const newIntersectionAn = {
+    x: end.x + (proposedPoint.x - end.x) * kAn,
+    y: end.y + (proposedPoint.y - end.y) * kAn,
+  };
 
-  // const newIntersectionAn = {
-  //   x: end.x + (proposedPoint.x - end.x) * kAn,
-  //   y: end.y + (proposedPoint.y - end.y) * kAn,
-  // };
-
-  // angleStart.x = newIntersectionAn.x - distanceFromAngle1 * dy;
-  // angleStart.y = newIntersectionAn.y + distanceFromAngle1 * dx;
-
-  // angleEnd.x = newIntersection.x + distanceFromAngle2 * dy;
-  // angleEnd.y = newIntersection.y - distanceFromAngle2 * dx;
+  angleStart.x = newIntersectionAn.x + 1;
+  angleStart.y = newIntersectionAn.y + 1;
 
   // Perpendicular line 2
   const intersection2 = external.cornerstoneMath.lineSegment.intersectLine(
@@ -162,29 +158,25 @@ export default function(proposedPoint, data) {
   perpendicularEnd2.x = newIntersection2.x + distanceFromPerpendicularP4 * dy;
   perpendicularEnd2.y = newIntersection2.y - distanceFromPerpendicularP4 * dx;
 
+  perpendicularStart2.locked = false;
+
   // Angle line 2
-  // const intersectionAn2 = external.cornerstoneMath.lineSegment.intersectLine(
-  //   longLine,
-  //   angleLine2
-  // );
+  const intersectionAn2 = external.cornerstoneMath.lineSegment.intersectLine(
+    longLine,
+    angleLine2
+  );
 
-  // const distanceFromAngle3 = distance(angleStart2, intersectionAn2);
-  // const distanceFromAngle4 = distance(angleEnd2, intersectionAn2);
+  const distanceToLineAn4 = distance(end, intersectionAn2);
 
-  // const distanceToLineAn4 = distance(end, intersectionAn2);
+  const kAn2 = distanceToLineAn4 / newLineLength;
 
-  // const kAn2 = distanceToLineAn4 / newLineLength;
+  const newIntersectionAn2 = {
+    x: end.x + (proposedPoint.x - end.x) * kAn2,
+    y: end.y + (proposedPoint.y - end.y) * kAn2,
+  };
 
-  // const newIntersectionAn2 = {
-  //   x: end.x + (proposedPoint.x - end.x) * kAn2,
-  //   y: end.y + (proposedPoint.y - end.y) * kAn2,
-  // };
-
-  // angleStart2.x = newIntersectionAn2.x - distanceFromAngle3 * dy;
-  // angleStart2.y = newIntersectionAn2.y + distanceFromAngle3 * dx;
-
-  // angleEnd2.x = newIntersection2.x + distanceFromAngle4 * dy;
-  // angleEnd2.y = newIntersection2.y - distanceFromAngle4 * dx;
+  angleStart2.x = newIntersectionAn2.x - 1;
+  angleStart2.y = newIntersectionAn2.y + 1;
 
   return true;
 }

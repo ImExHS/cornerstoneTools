@@ -23,7 +23,6 @@ export default function(evt) {
   const eventData = evt.detail;
   const { element, canvasContext, image } = eventData;
   const {
-    handleRadius,
     drawHandlesOnHover,
     hideHandlesIfMoved
   } = this.configuration;
