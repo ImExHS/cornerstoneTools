@@ -591,7 +591,6 @@ export default class extends baseAnnotationTool {
     const segElem1 = ev.detail.measurementData.segElem;
     const segElem2 = ev.detail.measurementData.segElem2;
 
-    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxx remove - toolType', ev.detail.toolType);
     if ( !ev.detail.toolType || ev.detail.toolType != 'cobbAngleMV' ) {
       return;
     }
@@ -603,49 +602,44 @@ export default class extends baseAnnotationTool {
 
     const toolType = ev.detail.toolType;
     const data = ev.detail.measurementData;
-    console.log('xxxxxxxxxxxxxx data', data);
     
     if ( elem === segElem1 ) {
 
       // ensure data is removed from other element
       const toolData = getToolState(segElem2, 'cobbAngleMV');
-      console.log('xxxxxxxxxxxxxxxxxxxxxxxxxx remove - toolData seg2', toolData);
+      if ( toolData ) {
 
-      // Find this tool data
-      let indexOfData = -1;
-      for (let i = 0; i < toolData.data.length; i++) {
-        if (toolData.data[i] === data) {
-          indexOfData = i;
+        // Find this tool data
+        let indexOfData = -1;
+        for (let i = 0; i < toolData.data.length; i++) {
+          if (toolData.data[i] === data) {
+            indexOfData = i;
+          }
+        }
+
+        if (indexOfData !== -1) {
+          toolData.data.splice(indexOfData, 1);
         }
       }
-
-      if (indexOfData !== -1) {
-        console.log('xxxxxxxxxxxxxx removing semgent 2');
-        toolData.data.splice(indexOfData, 1);
-      }
-
-      console.log('xxxxxxxxxxxxxx updating semgent 2', segElem2);
       external.cornerstone.updateImage(segElem2);
     } else {
 
       // ensure data is removed from other element
       const toolData = getToolState(segElem1, 'cobbAngleMV');
-      console.log('xxxxxxxxxxxxxxxxxxxxxxxxxx remove - toolData seg1', toolData);
+      if ( toolData ) {
 
-      // Find this tool data
-      let indexOfData = -1;
-      for (let i = 0; i < toolData.data.length; i++) {
-        if (toolData.data[i] === data) {
-          indexOfData = i;
+        // Find this tool data
+        let indexOfData = -1;
+        for (let i = 0; i < toolData.data.length; i++) {
+          if (toolData.data[i] === data) {
+            indexOfData = i;
+          }
+        }
+
+        if (indexOfData !== -1) {
+          toolData.data.splice(indexOfData, 1);
         }
       }
-
-      if (indexOfData !== -1) {
-        console.log('xxxxxxxxxxxxxx removing semgent 1');
-        toolData.data.splice(indexOfData, 1);
-      }
-
-      console.log('xxxxxxxxxxxxxx updating semgent 1', segElem1);
       external.cornerstone.updateImage(segElem1);
     }
   }
