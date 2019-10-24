@@ -66,7 +66,7 @@ export default function(evt) {
 
     // Calculate the data measurements
     if (data.invalidated === true) {
-      if (data.longestDiameter && data.shortestDiameter) {
+      if (data.A && data.B && data.C && data.index) {
         this.throttledUpdateCachedStats(image, element, data);
       } else {
         this.updateCachedStats(image, element, data);
@@ -213,6 +213,11 @@ const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
     const ratio = roundToDecimal((a + b)*100.0/c,2);
     indexText = ` index: ${ratio}`;
   }
+
+  data.A = a;
+  data.B = b;
+  data.C = c;
+  data.index = roundToDecimal((a + b)*100.0/c,2);
 
   const aText = ` A: ${a}${suffix}`;
   const bText = ` B: ${b}${suffix}`;

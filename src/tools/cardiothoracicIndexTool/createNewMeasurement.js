@@ -40,8 +40,10 @@ export default function(mouseEventData) {
         hasBoundingBox: true,
       }),
     },
-    longestDiameter: 0,
-    shortestDiameter: 0,
+    A: 0,
+    B: 0,
+    C: 0,
+    index: 0
   };
 
   return measurementData;
