@@ -38,8 +38,7 @@ export default function(mouseEventData) {
         hasBoundingBox: true,
       }),
     },
-    longestDiameter: 0,
-    shortestDiameter: 0,
+    parallelDistance: 0,
   };
 
   return measurementData;

@@ -1,3 +1,5 @@
+import external from "../../../externalModules";
+
 /**
  * Calculates longest and shortest diameters using measurement handles and pixelSpacing
  * @param  {Object} measurementData
@@ -7,41 +9,72 @@ export default function calculateLongestAndShortestDiameters(
   measurementData,
   pixelSpacing
 ) {
+
   const { rowPixelSpacing, colPixelSpacing } = pixelSpacing;
   const {
     start,
     end,
     perpendicularStart,
     perpendicularEnd,
+    perpendicularStart2,
+    perpendicularEnd2,
   } = measurementData.handles;
 
-  // Calculate the long axis length
-  const dx = (start.x - end.x) * (colPixelSpacing || 1);
-  const dy = (start.y - end.y) * (rowPixelSpacing || 1);
-  let length = Math.sqrt(dx * dx + dy * dy);
+  const longLine = {
+    start: {
+      x: start.x,
+      y: start.y,
+    },
+    end: {
+      x: end.x,
+      y: end.y,
+    },
+  };
 
-  // Calculate the short axis length
-  const wx =
-    (perpendicularStart.x - perpendicularEnd.x) * (colPixelSpacing || 1);
-  const wy =
-    (perpendicularStart.y - perpendicularEnd.y) * (rowPixelSpacing || 1);
-  let width = Math.sqrt(wx * wx + wy * wy);
+  const perpendicularLine1 = {
+    start: {
+      x: perpendicularStart.x,
+      y: perpendicularStart.y,
+    },
+    end: {
+      x: perpendicularEnd.x,
+      y: perpendicularEnd.y,
+    },
+  };
 
-  if (!width) {
-    width = 0;
+  const perpendicularLine2 = {
+    start: {
+      x: perpendicularStart2.x,
+      y: perpendicularStart2.y,
+    },
+    end: {
+      x: perpendicularEnd2.x,
+      y: perpendicularEnd2.y,
+    },
+  };
+
+  const intersectionP1 = external.cornerstoneMath.lineSegment.intersectLine(
+    longLine,
+    perpendicularLine1
+  );
+
+  const intersectionP2 = external.cornerstoneMath.lineSegment.intersectLine(
+    longLine,
+    perpendicularLine2
+  );
+
+  let parallelDistance = 0;
+  if (intersectionP1 && intersectionP2) {
+    if (!isNaN(intersectionP1.x) || !isNaN(intersectionP2.x)) {
+      const dx =
+        (intersectionP2.x - intersectionP1.x) * (colPixelSpacing || 1);
+      const dy =
+        (intersectionP2.y - intersectionP1.y) * (rowPixelSpacing || 1);
+  
+      parallelDistance = Math.sqrt(dx * dx + dy * dy).toFixed(2);
+    }
   }
-
-  // Length is always longer than width
-  if (width > length) {
-    const tempW = width;
-    const tempL = length;
-
-    length = tempW;
-    width = tempL;
-  }
-
   return {
-    longestDiameter: length.toFixed(1),
-    shortestDiameter: width.toFixed(1),
+    parallelDistance
   };
 }
