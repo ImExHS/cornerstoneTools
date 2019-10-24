@@ -157,7 +157,7 @@ const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
 
   const parallel_distance = Math.sqrt(dx * dx + dy * dy).toFixed(2);
 
-  data.parallelDistance = parallel_distance;
+  data.parallelDistance = Math.sqrt(dx * dx + dy * dy);
 
   const lengthText = ` Distance ${parallel_distance}${suffix}`;
 
