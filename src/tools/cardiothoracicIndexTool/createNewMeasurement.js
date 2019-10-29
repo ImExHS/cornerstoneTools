@@ -19,6 +19,7 @@ export default function(mouseEventData) {
     toolType: this.name,
     isCreating: true,
     visible: true,
+    color: undefined,
     active: true,
     invalidated: true,
     handles: {

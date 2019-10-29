@@ -49,7 +49,7 @@ export default function(evt) {
       continue;
     }
 
-    color = data.active ? activeColor : toolColors.getToolColor();
+    color = toolColors.getColorIfActive(data);
 
     // Calculate the data measurements
     if (data.invalidated === true) {
