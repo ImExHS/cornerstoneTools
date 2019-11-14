@@ -69,12 +69,8 @@ export default function(eventData, data) {
   } else {
     if (intersectionP1 && intersectionP2) {
       // Length of long-axis
-      const dx =
-        (intersectionP1.x - intersectionP2.x) *
-        (eventData.image.columnPixelSpacing || 1);
-      const dy =
-        (intersectionP1.y - intersectionP2.y) *
-        (eventData.image.rowPixelSpacing || 1);
+      const dx = (intersectionP1.x - intersectionP2.x);
+      const dy = (intersectionP1.y - intersectionP2.y);
       const length = Math.sqrt(dx * dx + dy * dy);
 
       const baseline_angle = Math.abs(Math.atan2(dy, dx));
@@ -98,13 +94,13 @@ export default function(eventData, data) {
         dy_perpendicular = length * Math.sin(perpendicular_angle);
       }
 
-      startX_p1 = intersectionP1.x - dx_perpendicular / 6 + 50;
-      startY_p1 = intersectionP1.y - dy_perpendicular / 10;
+      startX_p1 = intersectionP1.x - dx / 4 - dx_perpendicular / 8;
+      startY_p1 = intersectionP1.y - dy_perpendicular / 12;
       endX_p1 = data.handles.perpendicularEnd.x;
       endY_p1 = data.handles.perpendicularEnd.y;
 
-      startX_p2 = intersectionP2.x - dx_perpendicular / 6 - 50;
-      startY_p2 = intersectionP2.y - dy_perpendicular / 10;
+      startX_p2 = intersectionP1.x - (dx * 3) / 4 - dx_perpendicular / 8;
+      startY_p2 = intersectionP2.y - dy_perpendicular / 12;
       endX_p2 = data.handles.perpendicularEnd2.x;
       endY_p2 = data.handles.perpendicularEnd2.y;
     }
