@@ -55,7 +55,7 @@ export default function(evt) {
       continue;
     }
 
-    color = data.active ? activeColor : toolColors.getToolColor();
+    color = toolColors.getColorIfActive(data);
 
     draw(context, context => {
       // Configurable shadow
@@ -117,7 +117,7 @@ export default function(evt) {
 
       // Calculate the data measurements
       if (data.invalidated === true) {
-        if (data.longestDiameter && data.shortestDiameter) {
+        if (data.D && data.I && data.D1 && data.D2 && data.H1 && data.H2) {
           throttledUpdateCachedStats(image, element, data);
         } else {
           updateCachedStats(image, element, data);
@@ -408,6 +408,13 @@ const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
       (rowPixelSpacing || 1);
 
     const h2 = Math.sqrt(dxh2 * dxh2 + dyh2 * dyh2).toFixed(2);
+
+    data.D = data.rAngle;
+    data.I = data.rAngle2;
+    data.D1 = d1;
+    data.D2 = d2;
+    data.H1 = h1;
+    data.H2 = h2;
 
     const dText = ` D ${data.rAngle}${String.fromCharCode(
       parseInt(str, 16)

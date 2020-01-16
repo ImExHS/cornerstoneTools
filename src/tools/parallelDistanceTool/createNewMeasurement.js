@@ -19,6 +19,7 @@ export default function(mouseEventData) {
     toolType: this.name,
     isCreating: true,
     visible: true,
+    color: undefined,
     active: true,
     invalidated: true,
     handles: {
@@ -38,8 +39,7 @@ export default function(mouseEventData) {
         hasBoundingBox: true,
       }),
     },
-    longestDiameter: 0,
-    shortestDiameter: 0,
+    parallelDistance: 0,
   };
 
   return measurementData;

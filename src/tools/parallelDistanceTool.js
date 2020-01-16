@@ -51,13 +51,11 @@ export default class extends baseAnnotationTool {
   updateCachedStats(image, element, data) {
     const pixelSpacing = getPixelSpacing(image);
     const {
-      longestDiameter,
-      shortestDiameter,
+      parallelDistance
     } = calculateLongestAndShortestDiameters(data, pixelSpacing);
 
     // Set measurement text to show lesion table
-    data.longestDiameter = longestDiameter;
-    data.shortestDiameter = shortestDiameter;
+    // data.parallelDistance = parallelDistance;
     data.invalidated = false;
   }
 }

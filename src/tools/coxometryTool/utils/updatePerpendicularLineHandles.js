@@ -21,8 +21,8 @@ export default function(eventData, data) {
       y: (start.y + end.y) / 2
     };
     // Length of long-axis
-    const dx = (start.x - end.x) * (eventData.image.columnPixelSpacing || 1);
-    const dy = (start.y - end.y) * (eventData.image.rowPixelSpacing || 1);
+    const dx = (start.x - end.x);
+    const dy = (start.y - end.y);
     const length = Math.sqrt(dx * dx + dy * dy);
 
     const baseline_angle = Math.abs(Math.atan2(dy, dx));

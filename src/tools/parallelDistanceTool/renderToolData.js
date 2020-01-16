@@ -49,11 +49,11 @@ export default function(evt) {
       continue;
     }
 
-    color = data.active ? activeColor : toolColors.getToolColor();
+    color = toolColors.getColorIfActive(data);
 
     // Calculate the data measurements
     if (data.invalidated === true) {
-      if (data.longestDiameter && data.shortestDiameter) {
+      if (data.parallelDistance) {
         this.throttledUpdateCachedStats(image, element, data);
       } else {
         this.updateCachedStats(image, element, data);
@@ -156,6 +156,8 @@ const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
     (intersectionP2.y - intersectionP1.y) * (rowPixelSpacing || 1);
 
   const parallel_distance = Math.sqrt(dx * dx + dy * dy).toFixed(2);
+
+  data.parallelDistance = Math.sqrt(dx * dx + dy * dy);
 
   const lengthText = ` Distance ${parallel_distance}${suffix}`;
 

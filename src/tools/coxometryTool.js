@@ -51,8 +51,6 @@ export default class extends baseAnnotationTool {
     } = calculateLongestAndShortestDiameters(data, pixelSpacing);
 
     // Set measurement text to show lesion table
-    data.longestDiameter = longestDiameter;
-    data.shortestDiameter = shortestDiameter;
     data.invalidated = false;
   }
 }
