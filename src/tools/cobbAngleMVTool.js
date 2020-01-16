@@ -14,10 +14,8 @@ import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import moveNewHandle from '../manipulators/moveNewHandle.js';
 import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
-import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import drawTextBox from '../util/drawTextBox.js';
-import getElementToolStateManager from '../stateManagement/toolState.js';
 
 // Drawing
 import {
@@ -61,6 +59,8 @@ export default class extends baseAnnotationTool {
       segElem2: undefined,
       segImage: undefined,
       segImage2: undefined,
+      segImageId: undefined,
+      segImageId2: undefined,
       handles: {
         start: {
           x: eventData.currentPoints.image.x,
@@ -175,13 +175,35 @@ export default class extends baseAnnotationTool {
       }
 
       // check if annotation is for current image
+      // if ( data.segElem === eventData.element && data.segImage.imageId !== imageId ) {
+      //   continue;
+      // }
+      // if ( data.segElem2 === eventData.element && data.segImage2.imageId !== imageId ) {
+      //   continue;
+      // }
+
       const imageId = evt.detail.image.imageId;
-      if ( data.segElem === eventData.element && data.segImage.imageId !== imageId ) {
+      if ( data.segElem === eventData.element && data.segImageId !== imageId ) {
         continue;
       }
-      if ( data.segElem2 === eventData.element && data.segImage2.imageId !== imageId ) {
+      else{
+        if( data.segElem !== eventData.element && data.segImageId === imageId ) {
+          // update element and image
+          data.segElem  = eventData.element;
+          data.segImage = evt.detail.image;
+        }
+      }
+
+      if ( data.segElem2 === eventData.element && data.segImageId2 !== imageId ) {
         continue;
       }
+      else{
+        if( data.segElem2 !== eventData.element && data.segImageId2 === imageId ) {
+          // update element and image
+          data.segElem2  = eventData.element;
+          data.segImage2 = evt.detail.image;
+        }
+      }      
 
       draw(context, (context) => {
 
@@ -238,6 +260,7 @@ export default class extends baseAnnotationTool {
       measurementData.complete = true;
       measurementData.segElem2 = element;
       measurementData.segImage2 = evt.detail.image;
+      measurementData.segImageId2 = evt.detail.image.imageId;
       measurementData.handles.start2 = {
         x: eventData.currentPoints.image.x,
         y: eventData.currentPoints.image.y,
@@ -265,6 +288,7 @@ export default class extends baseAnnotationTool {
       measurementData = this.createNewMeasurement(eventData);
       measurementData.segElem = element;
       measurementData.segImage = evt.detail.image;
+      measurementData.segImageId = evt.detail.image.imageId;
       addToolState(element, this.name, measurementData);
       toMoveHandle = measurementData.handles.end;
       this.associateElementToHandle( element, measurementData.handles.start );
