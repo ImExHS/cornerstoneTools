@@ -1,4 +1,5 @@
 import external from './../../../externalModules.js';
+import getSpPoint from '../utils/getSpPoint.js';
 
 // Move long-axis end point
 export default function(proposedPoint, data) {
@@ -45,10 +46,21 @@ export default function(proposedPoint, data) {
     },
   };
 
-  const intersection2 = external.cornerstoneMath.lineSegment.intersectLine(
+  let intersection2 = external.cornerstoneMath.lineSegment.intersectLine(
     longLine,
     perpendicularLine2
   );
+  if ( !intersection2 ) {
+    console.log('Warning: ParallelDistanceTool - null intersection');
+    const pointInLine = getSpPoint(longLine.start,longLine.end,perpendicularLine2.start);
+    const lengthSp = distance(longLine.start, pointInLine);
+    const lengthEp = distance(longLine.end, pointInLine);
+    if ( lengthSp < lengthEp ) {
+      intersection2 = longLine.start;
+    } else { 
+      intersection2 = longLine.end;
+    }    
+  }
 
   const offset_baseline = 3;
   const newLineLength = distance(start, proposedPoint);
@@ -60,10 +72,21 @@ export default function(proposedPoint, data) {
 
   // Perpendicular Line 1
 
-  const intersection = external.cornerstoneMath.lineSegment.intersectLine(
+  let intersection = external.cornerstoneMath.lineSegment.intersectLine(
     longLine,
     perpendicularLine
   );
+  if ( !intersection ) {
+    console.log('Warning: ParallelDistanceTool - null intersection');
+    const pointInLine = getSpPoint(longLine.start,longLine.end,perpendicularLine.start);
+    const lengthSp = distance(longLine.start, pointInLine);
+    const lengthEp = distance(longLine.end, pointInLine);
+    if ( lengthSp < lengthEp ) {
+      intersection = longLine.start;
+    } else { 
+      intersection = longLine.end;
+    }    
+  }
 
   const distanceFromPerpendicularP1 = distance(
     perpendicularStart,
