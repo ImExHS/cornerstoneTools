@@ -1,4 +1,5 @@
 import external from './../../../externalModules.js';
+import getSpPoint from '../utils/getSpPoint.js';
 
 // Move long-axis start point
 export default function(proposedPoint, data) {
@@ -27,10 +28,21 @@ export default function(proposedPoint, data) {
     },
   };
 
-  const intersection = external.cornerstoneMath.lineSegment.intersectLine(
+  let intersection = external.cornerstoneMath.lineSegment.intersectLine(
     longLine,
     perpendicularLine
   );
+  if ( !intersection ) {
+    console.log('Warning: BidirectionalTool - null intersection');
+    const pointInLine = getSpPoint(longLine.start,longLine.end,perpendicularLine.start);
+    const lengthSp = distance(longLine.start, pointInLine);
+    const lengthEp = distance(longLine.end, pointInLine);
+    if ( lengthSp < lengthEp ) {
+      intersection = longLine.start;
+    } else { 
+      intersection = longLine.end;
+    }  
+  }
 
   const distanceFromPerpendicularP1 = distance(
     perpendicularStart,
