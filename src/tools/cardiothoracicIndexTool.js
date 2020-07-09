@@ -18,7 +18,7 @@ export default class extends baseAnnotationTool {
   constructor(name = 'cardiothoracicIndex') {
     const defaultProps = {
       name,
-      supportedInteractionTypes: ['mouse'], 
+      supportedInteractionTypes: ['mouse', 'touch'], 
       configuration: {
         changeMeasurementLocationCallback: emptyLocationCallback,
         getMeasurementLocationCallback: emptyLocationCallback,
