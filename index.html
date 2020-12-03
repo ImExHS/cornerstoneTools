@@ -123,7 +123,6 @@
 		// TODO: could use it to init itself
 		cornerstone.enable(element);
 		cTools.addEnabledElement(element);
-
 		element.tabIndex = 0;
 		element.focus();
 
@@ -192,7 +191,7 @@
 			const toolType = evt.target.getAttribute('data-tool-type')
 			setButtonActive(toolName, mouseButtonMask, toolType);
 			cTools.setToolActive(toolName, { mouseButtonMask });
-
+			console.log('xxxxxxxxxxxxxxxxx active', toolName);
 			evt.preventDefault();
 			evt.stopPropagation();
 			evt.stopImmediatePropagation();
@@ -218,13 +217,14 @@
 				cTools.setToolEnabled(toolName);
 			} else {
 				cTools.setToolDisabled(toolName);
+				console.log('xxxxxxxxxxxxxxxxxxxx disabled', toolName);
 			}
 			toolLabel.classList.toggle('turned-on');
 		});
 	});
 
 	// Activate first tool
-	cTools.setToolActive(cTools.store.state.tools[0].name, { mouseButtonMask: 1 });
+	cTools.setToolActive('length', { mouseButtonMask: 1 });
 
 	const setToolCategoryActive = (categoryName) => {
 		Array.from(toolCategoryLinks).forEach(toolLink => {
