@@ -77,6 +77,9 @@ export default function (image, storedPixelValue) {
   if (!startTime || !totalDose || !halfLife || !seriesAcquisitionTime) {
     return;
   }
+  if (totalDose <= 0){
+    return;
+  }
 
   const doseData = {
     startTime, totalDose, halfLife, seriesAcquisitionTime
