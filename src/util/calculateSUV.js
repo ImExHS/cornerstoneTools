@@ -55,7 +55,6 @@ export default function (image, storedPixelValue) {
   }
 
   const modalityPixelValue = storedPixelValue * image.slope + image.intercept;
-
   const patientWeight = patientStudyModule.patientWeight;
 
   if (!patientWeight) {
@@ -66,7 +65,7 @@ export default function (image, storedPixelValue) {
 
   if (!petSequenceModule) {
     return;
-  }
+  }  
 
   const radiopharmaceuticalInfo = petSequenceModule.radiopharmaceuticalInfo;
   const startTime = radiopharmaceuticalInfo.radiopharmaceuticalStartTime;
@@ -85,11 +84,21 @@ export default function (image, storedPixelValue) {
     startTime, totalDose, halfLife, seriesAcquisitionTime
   }
 
-  let units = image.data.string('x00541001');
-  if ( units.trim() != 'BQML') {
+  let units = '';
+  const petUnitsModule = cornerstone.metaData.get('petUnitsModule', image.imageId);
+
+  if (petUnitsModule && petUnitsModule.units) {
+    units = petUnitsModule.units;
+  }
+  else {
+    units = image.data.string('x00541001');
+  }
+
+  if ( units.trim() !== 'BQML') {
+    console.log('Pet suv: only BQML units supported', units);
     // only BQML supported
     return;
-  }
+  }  
  
   // convert pixel to kBq
   const kBqPixel = convertRadioactivity(modalityPixelValue, 'Bq', 'kBq');
