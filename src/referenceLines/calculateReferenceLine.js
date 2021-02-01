@@ -5,7 +5,6 @@ import { planePlaneIntersection, projectPatientPointToImagePlane } from '../util
 // That requires a bit more math and this works fine for most cases
 export default function (targetImagePlane, referenceImagePlane) {
   const points = planePlaneIntersection(targetImagePlane, referenceImagePlane);
-
   if (!points) {
     return;
   }

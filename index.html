@@ -191,7 +191,6 @@
 			const toolType = evt.target.getAttribute('data-tool-type')
 			setButtonActive(toolName, mouseButtonMask, toolType);
 			cTools.setToolActive(toolName, { mouseButtonMask });
-			console.log('xxxxxxxxxxxxxxxxx active', toolName);
 			evt.preventDefault();
 			evt.stopPropagation();
 			evt.stopImmediatePropagation();
@@ -217,7 +216,6 @@
 				cTools.setToolEnabled(toolName);
 			} else {
 				cTools.setToolDisabled(toolName);
-				console.log('xxxxxxxxxxxxxxxxxxxx disabled', toolName);
 			}
 			toolLabel.classList.toggle('turned-on');
 		});
