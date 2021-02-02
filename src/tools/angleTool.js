@@ -176,32 +176,18 @@ export default class extends baseAnnotationTool {
         const rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
 
         const sideA = {
-          x:
-            (Math.ceil(data.handles.middle.x) -
-              Math.ceil(data.handles.start.x)) *
-            columnPixelSpacing,
-          y:
-            (Math.ceil(data.handles.middle.y) -
-              Math.ceil(data.handles.start.y)) *
-            rowPixelSpacing
+          x:(data.handles.middle.x - data.handles.start.x) * columnPixelSpacing,
+          y:(data.handles.middle.y - data.handles.start.y) * rowPixelSpacing
         };
 
         const sideB = {
-          x:
-            (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.middle.x)) *
-            columnPixelSpacing,
-          y:
-            (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.middle.y)) *
-            rowPixelSpacing
+          x: (data.handles.end.x - data.handles.middle.x) * columnPixelSpacing,
+          y: (data.handles.end.y - data.handles.middle.y) * rowPixelSpacing
         };
 
         const sideC = {
-          x:
-            (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.start.x)) *
-            columnPixelSpacing,
-          y:
-            (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.start.y)) *
-            rowPixelSpacing
+          x: (data.handles.end.x - data.handles.start.x) * columnPixelSpacing,
+          y: (data.handles.end.y - data.handles.start.y) * rowPixelSpacing
         };
 
         const sideALength = length(sideA);

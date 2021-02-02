@@ -116,7 +116,8 @@ export function planePlaneIntersection (targetImagePlane, referenceImagePlane) {
   // Use this distance to bound the ray intersecting the two planes
   const line = new external.cornerstoneMath.Line3();
 
-  line.start = origin;
+  // line.start = origin;
+  line.start = origin.clone().add(direction.multiplyScalar(-distance));
   line.end = origin.clone().add(direction.multiplyScalar(distance));
 
   // Find the intersections between this line and the reference image plane's four sides

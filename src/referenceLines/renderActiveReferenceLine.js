@@ -53,7 +53,6 @@ export default function (context, eventData, targetElement, referenceElement) {
   }
 
   const referenceLine = calculateReferenceLine(targetImagePlane, referenceImagePlane);
-
   if (!referenceLine) {
     return;
   }
