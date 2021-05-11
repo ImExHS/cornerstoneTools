@@ -332,7 +332,7 @@ export default class extends baseAnnotationTool {
 
       const rAngle = roundToDecimal(angle, 2);
 
-      if (!Number.isNaN(data.rAngle)) {
+      if (!Number.isNaN(rAngle)) {
         return textBoxText(
           rAngle,
           image.rowPixelSpacing,

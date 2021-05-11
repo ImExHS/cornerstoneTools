@@ -14,6 +14,8 @@ import drawTextBox from '../util/drawTextBox.js';
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
 
+import numberWithCommas from './shared/numbersWithCommas.js';
+
 export default class extends baseAnnotationTool {
   constructor (name = 'probe') {
     super({
@@ -109,10 +111,24 @@ export default class extends baseAnnotationTool {
       storedPixels = external.cornerstone.getStoredPixels(element, x, y, 1, 1);
       let sp = storedPixels[0];
       let mo = sp * image.slope + image.intercept;
-  
-      str = String(mo) + moSuffix;
+
+      let modality;
+      let suv;
+      if (seriesModule) {
+        modality = seriesModule.modality;
+      }    
+      if (modality === 'PT') {
+        suv = calculateSUV( image, sp );
+      }
+      if (suv !== undefined && suv !== null) {
+        str = `SUV: ${numberWithCommas(suv.toFixed(3))} g/ml`;
+      }
+      else {
+        str = String(mo.toFixed(3)) + moSuffix;
+      }
+      
     }
-  
+
     return str;
   }
 

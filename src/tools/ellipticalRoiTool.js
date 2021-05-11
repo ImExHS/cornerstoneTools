@@ -334,7 +334,7 @@ export default class extends baseAnnotationTool {
         }
 
         // Create a line of text to display the mean and any units that were specified (i.e. HU)
-        let meanText = `${numberWithCommas(
+        let meanText = `Mean: ${numberWithCommas(
           meanStdDev.mean.toFixed(2)
         )}${moSuffix}`;
         // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
@@ -342,18 +342,18 @@ export default class extends baseAnnotationTool {
         //   meanStdDev.stdDev.toFixed(2)
         // )}${moSuffix}`;
 
-        // If this image has SUV values to display, concatenate them to the text line
-        if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
-          const SUVtext = ' SUV: ';
-
-          meanText += SUVtext + numberWithCommas(meanStdDevSUV.mean.toFixed(2));
-          // stdDevText +=
-          //   SUVtext + numberWithCommas(meanStdDevSUV.stdDev.toFixed(2));
-        }
-
         // Add these text lines to the array to be displayed in the textbox
         textLines.push(meanText);
         // textLines.push(stdDevText);
+
+        // If this image has SUV values to display, concatenate them to the text line
+        if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
+          let SUVtext = `SUV Mean: ${numberWithCommas(
+            meanStdDevSUV.mean.toFixed(3)
+          )} g/ml`;
+          textLines.push(SUVtext);
+        }
+
       }
 
       // If the area is a sane value, display it
@@ -368,7 +368,7 @@ export default class extends baseAnnotationTool {
         }
 
         // Create a line of text to display the area and its units
-        const areaText = `${numberWithCommas(area.toFixed(2))}${suffix}`;
+        const areaText = `Area: ${numberWithCommas(area.toFixed(2))}${suffix}`;
 
         // Add this text line to the array to be displayed in the textbox
         textLines.push(areaText);

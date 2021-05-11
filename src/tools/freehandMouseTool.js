@@ -25,6 +25,8 @@ import { getNewContext, draw, drawJoinedLines } from './../util/drawing.js';
 import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
 import { clipToBox } from '../util/clip.js';
 import triggerEvent from '../util/triggerEvent.js';
+//
+import numberWithCommas from './shared/numbersWithCommas.js';
 
 export default class extends baseAnnotationTool {
 
@@ -383,21 +385,22 @@ export default class extends baseAnnotationTool {
         }
 
         // Create a line of text to display the mean and any units that were specified (i.e. HU)
-        let meanText = `${numbersWithCommas(meanStdDev.mean.toFixed(2))}${moSuffix}`;
+        let meanText = `Mean: ${numbersWithCommas(meanStdDev.mean.toFixed(2))}${moSuffix}`;
         // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
         let stdDevText = `StdDev: ${numbersWithCommas(meanStdDev.stdDev.toFixed(2))}${moSuffix}`;
-
-        // If this image has SUV values to display, concatenate them to the text line
-        if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
-          const SUVtext = ' SUV: ';
-
-          meanText += SUVtext + numbersWithCommas(meanStdDevSUV.mean.toFixed(2));
-          stdDevText += SUVtext + numbersWithCommas(meanStdDevSUV.stdDev.toFixed(2));
-        }
-
         // Add these text lines to the array to be displayed in the textbox
         textLines.push(meanText);
         // textLines.push(stdDevText);
+
+        // If this image has SUV values to display, concatenate them to the text line
+        if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
+          let SUVtext = `SUV Mean: ${numberWithCommas(
+            meanStdDevSUV.mean.toFixed(3)
+          )} g/ml`;
+          // stdDevText += SUVtext + numbersWithCommas(meanStdDevSUV.stdDev.toFixed(2));
+          textLines.push(SUVtext);
+        }
+
       }
 
       // If the area is a sane value, display it
@@ -412,7 +415,7 @@ export default class extends baseAnnotationTool {
         }
 
         // Create a line of text to display the area and its units
-        const areaText = `${numbersWithCommas(area.toFixed(2))}${suffix}`;
+        const areaText = `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
 
         // Add this text line to the array to be displayed in the textbox
         textLines.push(areaText);
