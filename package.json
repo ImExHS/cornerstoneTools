@@ -87,7 +87,8 @@
   },
   "dependencies": {
     "babel-runtime": "^6.26.0",
-    "cornerstone-math": "^0.1.6"
+    "cornerstone-math": "^0.1.6",
+    "cornerstone-web-image-loader": "^2.1.1"
   },
   "files": [
     "dist/cornerstoneTools.js",

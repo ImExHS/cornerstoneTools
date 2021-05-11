@@ -24,6 +24,7 @@ import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js
 import { getNewContext, draw, drawJoinedLines } from './../util/drawing.js';
 import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
 import { clipToBox } from '../util/clip.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 export default class extends baseAnnotationTool {
 
@@ -102,7 +103,7 @@ export default class extends baseAnnotationTool {
     }
 
     const isPointNearTool = this._pointNearHandle(element, data, coords);
-
+  
     return isPointNearTool !== undefined;
   }
 
@@ -805,6 +806,13 @@ export default class extends baseAnnotationTool {
     }
 
     external.cornerstone.updateImage(eventData.element);
+    // send imex finish event
+    const completedEventData = {
+      toolType: this.name,
+      element: eventData.element,
+      measurementData: data
+    };
+    triggerEvent(eventData.element, EVENTS.MEASUREMENT_FINISHED, completedEventData);
   }
 
   /**
